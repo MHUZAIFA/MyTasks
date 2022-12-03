@@ -1,1 +1,46 @@
+// @import 'variables'
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap'
+
 /* You can add global styles to this file, and also import other style files */
+
+.ml-0
+  margin-left: 0 !important
+
+.mr-0
+  margin-right: 0 !important
+
+
+// hide scroll bars
+body
+  -ms-overflow-style: none
+  scrollbar-width: none
+
+  &.Light
+    @import 'light-theme-variables'
+    @import 'components'
+    background-color: $bg_primary
+    color: $text_default
+
+  &.Dark
+    @import 'dark-theme-variables'
+    @import 'components'
+    background-color: $bg_primary
+    color: $text_default
+
+
+
+::-webkit-scrollbar
+  /* Safari and Chrome */
+  display: none
+
+
+.form-select-sm
+  cursor: pointer
+
+.landscapeMode
+  .cdk-overlay-container
+    .mat-dialog-content
+      min-height: 280px
+      .mat-toolbar.header
+        display: none

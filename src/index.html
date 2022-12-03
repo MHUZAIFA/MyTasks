@@ -1,13 +1,55 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <title>Todo</title>
+  <title>My Tasks</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" id="viewport"
+    content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="./assets/font-awsome/css/all.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#000">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2C8Z8N114F"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-2C8Z8N114F');
+  </script>
+  <script>
+    // Global boolean variable that holds the current orientation
+    var pageInPortraitMode;
+
+    // Listen for window resizes to detect orientation changes
+    window.addEventListener("resize", windowSizeChanged);
+
+    // Set the global orientation variable as soon as the page loads
+    addEventListener("load", function () {
+      pageInPortraitMode = window.innerHeight > window.innerWidth;
+      document.getElementById("viewport").setAttribute("content", "width=" + window.outerWidth + ", height=" + window.outerHeight + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0");
+    })
+
+    // Adjust viewport values only if orientation has changed (not on every window resize)
+    function windowSizeChanged() {
+      if (((pageInPortraitMode === true) && (window.innerHeight < window.innerWidth)) || ((pageInPortraitMode === false) && (window.innerHeight > window.innerWidth))) {
+        pageInPortraitMode = window.innerHeight > window.innerWidth;
+        document.getElementById("viewport").setAttribute("content", "width=" + window.outerWidth + ", height=" + window.outerHeight + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0");
+      }
+    }
+  </script>
+
 </head>
-<body>
+
+<body class="mat-typography">
   <app-root></app-root>
+  <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>
+
 </html>

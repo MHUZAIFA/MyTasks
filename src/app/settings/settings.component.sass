@@ -1,0 +1,77 @@
+.settings_wrapper
+  width: 100%
+  height: calc( 100vh - 48px )
+  display: flex
+  flex-direction: column
+  justify-content: flex-start
+  overflow-y: auto
+  overflow-x: hidden
+  padding-bottom: 48px
+
+  &.mobileDevice
+    padding: 15px
+
+    &.isLandscapeMode
+      height: 100vh
+      flex-direction: row
+      align-items: center
+
+      .user_info, .settings
+        width: 50%
+        padding: 0.3rem
+
+  .settings_header
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 15px
+    height: 30px
+
+    .options
+      display: flex
+      justify-content: space-between
+      align-items: center
+
+      .mat-icon
+        height: 17px
+        width: 17px
+        font-size: 17px
+        cursor: pointer
+
+  .user_card
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+    width: 100%
+    margin: 50px 0
+
+    .user_info_container
+      display: flex
+      flex-direction: row
+      justify-content: space-between
+
+      .user_img
+        width: 29%
+        display: flex
+        justify-content: center
+        align-items: center
+
+        img
+          border-radius: 5px
+
+      .user_info
+        width: 69%
+        display: flex
+        flex-direction: column
+        justify-content: flex-end
+        align-items: flex-start
+
+        h2,p
+          margin-bottom: 0
+
+        .user_actions
+          display: flex
+          justify-content: space-between
+          width: 100%
+          align-items: center
+          margin-top: 5%

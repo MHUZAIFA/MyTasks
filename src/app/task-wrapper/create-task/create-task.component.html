@@ -1,0 +1,33 @@
+<div class="task_create_wrapper">
+  <input id="input_create" type="text" class="form-control theme_text_input" placeholder="Input new task here..." [(ngModel)]="title"
+  (keydown.enter)="create()">
+
+  <div class="subtask_input">
+    <app-subtask-unit *ngFor="let subtask of subtasks; let last = last;" [subTask]="subtask" [last]="last" (remove)="deleteSubTask(subtask.id)"
+      (addSubtaskEvent)="addSubtask(true)">
+    </app-subtask-unit>
+  </div>
+  <div class="task_create_options">
+    <div class="task_metadata">
+      <div class="custom_options">
+
+        <div class="form-select form-select-sm custom_select_round" [matMenuTriggerFor]="menu"> {{ category }}
+        </div>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngFor="let item of categories" (click)="category = item">
+            <span> {{ item }} </span>
+          </button>
+        </mat-menu>
+
+      </div>
+      <mat-icon class="custom_options custom_icon" (click)="setMetadata()">event_note</mat-icon>
+      <mat-icon class="custom_options custom_icon" (click)="addSubtask(true)">account_tree</mat-icon>
+    </div>
+
+    <div class="task_submit">
+      <button class="btn_submit" mat-mini-fab (click)="create()" [disabled]="isCreateDisabled" color="primary">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

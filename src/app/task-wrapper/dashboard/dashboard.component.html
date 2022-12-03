@@ -1,0 +1,50 @@
+<div class="dashboard_wrapper" id="dashboard" [ngClass]="{'mobileDevice': systemSettingsService.isMobileDevice, 'landscapeMode': systemSettingsService.isMobileDevice && systemSettingsService.isLandscapeMode }">
+  <div class="tasks_overview">
+    <div class="wrapper_content">
+      <div class="content">
+        <app-greeting></app-greeting>
+        <app-progress></app-progress>
+        <app-stats></app-stats>
+      </div>
+      <div #containerRef style="display: flex; flex-grow: 1; height: 100%; width: 100%;" *ngIf="!systemSettingsService.isMobileDevice">
+        <ng-container *ngIf="noTasks; then noChartData; else chartBlock;"></ng-container>
+        <ng-template #noChartData>
+          <div class="illustration custom_illustration_chart add_delay">
+            <img src="../../assets/illustrations/real_time_analytic.svg" alt="no_task_selected" width="100%" height="auto">
+            <p style="margin-top: 12px;">Add a task to view real time analytics</p>
+          </div>
+        </ng-template>
+        <ng-template #chartBlock>
+        <ng-container *ngIf="noSearchResult; then noSearchResultBlock; else chartData;"></ng-container>
+        <ng-template #noSearchResultBlock>
+          <div class="illustration custom_illustration_chart add_delay">
+            <img src="../../assets/illustrations/no_search_chart.svg" alt="no_task_selected" width="90%" height="auto">
+            <p style="margin-top: 12px;">No tasks found for applied search and filter.</p>
+          </div>
+        </ng-template>
+        <ng-template #chartData>
+          <app-gauge-chart
+          [container]="containerRef"
+          [chartData]="gaugeChartData"
+          [max]="gaugeChartMax"
+          (selectedEvent)="filterList($event)"
+          >
+        </app-gauge-chart>
+        </ng-template>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div class="tasks_content">
+    <div class="wrapper_content">
+      <div class="content">
+        <app-task-list-wrapper></app-task-list-wrapper>
+      </div>
+    </div>
+  </div>
+  <div class="task_details" *ngIf="!systemSettingsService.isMobileDevice">
+    <div class="wrapper_content">
+      <router-outlet name="sidepanel"></router-outlet>
+    </div>
+  </div>
+</div>

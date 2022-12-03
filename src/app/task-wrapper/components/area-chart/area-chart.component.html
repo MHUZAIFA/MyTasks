@@ -1,0 +1,21 @@
+<ngx-charts-area-chart-stacked
+  class="custom_chart"
+  [view]="view"
+  [scheme]="colorScheme"
+  [legend]="legend"
+  [legendPosition]="legendPosition"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxis]="xAxis"
+  [yAxis]="yAxis"
+  [showGridLines]="false"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  [trimXAxisTicks]="true"
+  [trimYAxisTicks]="true"
+  [timeline]="timeline"
+  [results]="chartData"
+  (window:resize)="onResize()"
+  [curve]="curve"
+  (select)="onSelect($event)">
+</ngx-charts-area-chart-stacked>

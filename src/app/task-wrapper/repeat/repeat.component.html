@@ -1,0 +1,19 @@
+<div *ngIf="repeatedTask" class="repeated_wrapper">
+  <div class="repeated_heading">
+    <span>Set as Repeat Task</span> &nbsp;
+    <mat-slide-toggle (ngModelChange)="repeatedTask.isRepeated = $event" [(ngModel)]="repeatedTask.isRepeated" class="example-margin" [color]="color" [checked]="this.repeatedTask.isRepeated" [disabled]="disabled">
+    </mat-slide-toggle>
+  </div>
+
+  <div class="custom_badge_container">
+    <span class="theme_badge" [ngClass]="{'selected': option.value === this.repeatedTask.interval, 'disabled': !repeatedTask.isRepeated }"
+      *ngFor="let option of Interval | keyvalue" (click)="setRepeatInterval(option.value)">
+      {{ option.value }}
+    </span>
+  </div>
+
+  <div class="repeated_actions">
+    <button class="custom_modal_btn custom_secondary theme_text_secondary" mat-button (click)="onCanelClicked()">Cancel</button>
+    <button class="custom_modal_btn" mat-button [mat-dialog-close]="repeatedTask" color="primary">Done</button>
+  </div>
+</div>

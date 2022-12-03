@@ -1,0 +1,8 @@
+<h1 mat-dialog-title> {{ alertTitle }} </h1>
+<div mat-dialog-content>
+  {{ alertDescription }}
+</div>
+<div mat-dialog-actions style="display: flex; width: 100%; justify-content: flex-end;">
+  <button mat-button [mat-dialog-close]="false">Cancel</button>
+  <button mat-button [color]="color" [mat-dialog-close]="true"> {{ alertPrimaryActionText }} </button>
+</div>

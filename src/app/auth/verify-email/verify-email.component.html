@@ -1,0 +1,38 @@
+<div class="sign_in_container">
+  <div class="sign_in_wrapper">
+    <div class="sign_in_header_container unselectable">
+      <div style="display: flex; align-items: center;">
+        <mat-icon (click)="back()" style="cursor: pointer;">arrow_back_ios</mat-icon>
+        <div class="sign_in_header_content">
+          <h3 class="my-0">
+            Email verification
+          </h3>
+          <p>
+            Verify your email address.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="card my-0" [ngClass]="{'mobile': systemSettingsService.isMobileDevice}">
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 20px;">
+        <img src="../../../assets/illustrations/mail_verification.svg" alt="verify" width="80%" height="auto">
+      </div>
+
+      <div *ngIf="user">
+        <p class="text-center">We have sent a confirmation email to <strong>{{user.email}}</strong>.</p>
+        <p class="text-center">Please check your email and click on the link to verfiy your email address.</p>
+      </div>
+
+      <button type="submit" mat-raised-button color="primary" class="btn_next" [disabled]="!canResendVerficationEmail"
+        (click)="resendVerificationEmail()">
+        Resend Email &nbsp; <mat-icon>trending_flat </mat-icon>
+      </button>
+      <p style="text-align: center;" *ngIf="!canResendVerficationEmail">
+        Kindly check your registered email inbox. Wait for couple of minutes before retrying.
+      </p>
+      <p>
+        Go back to? <a [routerLink]="['/login']" class="custom_redirect_link unselectable"> Login </a>
+      </p>
+    </div>
+  </div>
+</div>

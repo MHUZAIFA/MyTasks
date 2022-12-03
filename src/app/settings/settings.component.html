@@ -1,0 +1,59 @@
+<div class="settings_wrapper" [ngClass]="{'mobileDevice': systemSettingsService.isMobileDevice, 'isLandscapeMode': systemSettingsService.isMobileDevice && systemSettingsService.isLandscapeMode }">
+  <div class="user_info">
+    <div class="settings_header">
+      <div class="options">
+        <mat-icon (click)="close()">arrow_back_ios</mat-icon> My Account
+      </div>
+    </div>
+    <div class="user_card">
+      <div class="user_info_container" *ngIf="user">
+        <div class="user_img">
+          <img [src]="user.photoURL" alt="profile" height="auto" width="100%">
+        </div>
+        <div class="user_info">
+          <h2> {{ user.displayName }} </h2>
+          <p *ngIf="user.email"> {{ user.email }} </p>
+          <div class="user_actions" *ngIf="!user.isGuest">
+            <button mat-raised-button color="primary" class="custom_button btn_sync ml-0" (click)="sync()">
+              Sync
+            </button>
+            <button mat-raised-button color="warn" class="custom_button btn_logout mr-0" (click)="logout()">
+              Logout
+            </button>
+          </div>
+          <div class="user_actions" *ngIf="user.isGuest">
+            <button mat-raised-button color="primary" class="custom_button btn_sync ml-0" (click)="registerGuest()">
+              Register
+            </button>
+            <button mat-raised-button color="warn" class="custom_button btn_logout mr-0" (click)="guestLogout()">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings">
+    <app-settings-unit icon="brightness_medium" text="Theme">
+      <button mat-button [matMenuTriggerFor]="menu"> {{ systemSettingsService.currentTheme }} </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let item of themes" (click)="systemSettingsService.setTheme(item)">{{ item }}</button>
+      </mat-menu>
+    </app-settings-unit>
+    <app-settings-unit icon="forum" text="Feedback">&nbsp;</app-settings-unit>
+    <app-settings-unit icon="vibration" text="Allow Vibration">
+      <mat-slide-toggle (ngModelChange)="systemSettingsService.isVibrationOn = $event" [(ngModel)]="systemSettingsService.isVibrationOn" class="example-margin" [color]="color" [checked]="systemSettingsService.isVibrationOn">
+      </mat-slide-toggle>
+    </app-settings-unit>
+    <app-settings-unit icon="bug_report" text="Report a bug">&nbsp;</app-settings-unit>
+    <app-settings-unit icon="gavel" text="Terms and conditions">
+      Read
+    </app-settings-unit>
+    <app-settings-unit icon="code" text="Developer info">
+      <a href="https://huzaifaanjumportfolio.web.app/">Huzaifa Anjum</a>
+    </app-settings-unit>
+    <app-settings-unit icon="adb" text="Version" [hideBorder]="true">1.0.0</app-settings-unit>
+  </div>
+
+</div>

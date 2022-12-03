@@ -1,0 +1,49 @@
+.task_create_wrapper
+  display: flex
+  flex-direction: column
+  width: 100%
+
+  .input_hidden
+    height: 0
+    width: 0
+    display: inline
+    position: absolute
+    right: 0
+    top: 0
+    opacity: 0
+
+  .theme_text_input
+    height: 50px
+    border-radius: 10px
+    margin: 10px 0
+    box-shadow: none
+
+
+  .task_create_options
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    width: 100%
+
+    .task_metadata
+      display: flex
+      flex-direction: row
+      justify-content: flex-start
+      align-items: center
+
+      .custom_options
+        margin-right: 10px
+        cursor: pointer
+
+        &.custom_icon
+          font-size: 18px
+          height: 18px
+          width: 18px
+
+    .task_submit
+      .btn_submit
+        .mat-icon
+          height: 26px
+          width: 20px
+
+

@@ -1,0 +1,13 @@
+<div class="subtask_wrapper theme_bg_default" *ngIf="subTask">
+  <div class="subtask_checkbox" [ngClass]="{'isDisabled': isDisabled}">
+    <i [ngClass]="{ 'far fa-circle': !subTask.completed, 'fa fa-check-circle completed': subTask.completed }"
+      (click)="!isDisabled && subTask.completed = !subTask.completed"></i>
+  </div>
+  <div class="subtask_input">
+    <input [id]="subTask.id" [readonly]="isDisabled" type="text" placeholder="Input the sub-task"
+      [(ngModel)]="subTask.subtitle" [ngClass]="{'completed': subTask.completed, 'isDisabled': isDisabled }" (keydown.enter)="addSubtask()">
+  </div>
+  <div class="subtask_action" [ngClass]="{'isDisabled': isDisabled}" (click)="!isDisabled && delete()">
+    <mat-icon class="delete theme_icon_danger">close</mat-icon>
+  </div>
+</div>

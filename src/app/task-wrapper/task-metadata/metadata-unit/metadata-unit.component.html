@@ -1,0 +1,16 @@
+<div class="metadata_unit_wrapper border_default_color" (click)="!isDisabled && sectionClicked()" [ngClass]="{'disabled': isDisabled, 'hide_border' : hideBorder}"
+  (click)="tooltip.show()">
+  <div class="metadata_unit_icon">
+    <mat-icon class="theme_icon_secondary"> {{ icon }} </mat-icon>
+  </div>
+  <div class="metadata_key_value">
+    <div class="metadata_unit_key">
+      {{ label }}
+    </div>
+    <div class="metadata_unit_value theme_text_secondary" [matTooltip]="isDisabled ? disableTitle : ''" #tooltip="matTooltip"
+      matTooltipPosition="left" matTooltipClass="tooltip-custom" (mouseenter)="$event.stopImmediatePropagation()"
+      (mouseleave)="$event.stopImmediatePropagation()">
+      {{ value }}
+    </div>
+  </div>
+</div>

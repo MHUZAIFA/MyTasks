@@ -1,0 +1,60 @@
+.subtask_wrapper
+  display: flex
+  flex-direction: row
+  width: 100%
+  justify-content: space-between
+  align-items: center
+  margin: 10px 0px
+  padding: 3px 10px
+  border-radius: 5px
+
+  .isDisabled
+    cursor: not-allowed !important
+
+  &.input_hidden
+    height: 0
+    width: 0
+    display: inline
+    position: absolute
+    right: 0
+    top: 0
+    opacity: 0
+
+  .subtask_checkbox, .subtask_input, .subtask_action
+    display: flex
+    align-items: center
+
+  .subtask_checkbox, .subtask_action
+    width: 20px
+    cursor: pointer
+
+  .subtask_action
+    .delete, .linkto
+      height: 18px
+      width: 18px
+      font-size: 18px
+
+    .linkto
+      transform: rotate(135deg)
+
+  .subtask_checkbox
+    width: fit-content
+    display: flex
+    align-items: center
+
+  .subtask_input
+    flex-grow: 1
+    input
+      outline: none
+      box-shadow: none
+      cursor: pointer
+      border: none
+      width: 100%
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+      padding: 5px 10px
+
+      &.completed
+        text-decoration: line-through
+

@@ -1,0 +1,110 @@
+.detail_wrapper
+  display: flex
+  flex-direction: column
+  width: 100%
+
+  &.mobileDevice
+    padding: 15px
+
+  .task_details_header
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 15px
+    height: 30px
+
+    .mat-icon
+      height: 17px
+      width: 17px
+      font-size: 17px
+      cursor: pointer
+
+    .options
+      display: flex
+      justify-content: space-between
+      width: fit-content
+      align-items: center
+
+      .custom_vert_icon
+        width: 22px
+        height: 22px
+        font-size: 22px
+        margin-right: -5px
+
+      .custom_btn
+        display: flex
+        justify-content: center
+        align-items: center
+        border: none
+        border-radius: 2px
+        width: fit-content
+        height: 24px
+        font-size: smaller
+        padding-right: 7px
+
+        &.danger
+          margin-right: 10px
+
+        .mat-icon
+          height: 14px
+          width: 14px
+          font-size: 14px
+          margin-right: 2px
+
+      .theme_icon_flat_btn
+        margin: 0 3px
+        height: 19px
+        width: 19px
+        font-size: 19px
+
+  .custom_options
+    width: 100%
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-bottom: 8px
+
+    .form-select-sm
+      width: fit-content
+      box-shadow: none
+
+  .task_details_content
+    display: flex
+    flex-direction: column
+    width: 100%
+    height: calc( 100vh - 110px )
+    overflow-y: auto
+
+    &.landscapeMode
+      flex-direction: row
+      height: calc( 100vh - 30px )
+      width: calc( 100vw - 30px )
+      justify-content: space-between
+      padding: 0 0.5rem
+
+      .task_subtask, .task_metadata
+        display: flex
+        flex-direction: column
+        width: calc( 50vw - 2rem )
+        height: 100%
+        overflow: auto
+
+
+    .task_heading, .task_notes
+      .custom_textarea
+        width: 100%
+        border: none !important
+        border-radius: 5px
+        margin-top: 10px
+        padding: 8px
+        outline: none
+        overflow: hidden
+
+    .task_notes
+      .custom_textarea
+        margin-top: 5px
+        margin-bottom: 10px
+
+  .tasks_attachments
+    min-height: 100px
+    width: 100%

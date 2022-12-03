@@ -1,0 +1,156 @@
+<ng-container *ngIf="loading; then loadingBlock; else ResultBlock"></ng-container>
+<ng-template #loadingBlock>
+
+</ng-template>
+<ng-template #ResultBlock>
+  <ng-container *ngIf="isNotFound; then NotFoundBlock; else TaskBlock"></ng-container>
+  <ng-template #NotFoundBlock>
+    <div
+      style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: calc(100vh - 40px);">
+      <div style="height: 102px; width: 100%; display: flex;">
+        &nbsp;
+      </div>
+      <div class="illustration add_delay" style="height: calc(100vh - 102px - 48px);"
+        [ngClass]="{'no_tasks': (taskDataService.tasks$ | async)?.length === 0 }">
+        <img src="../../../assets/illustrations/empty_cart.svg" alt="no_task_selected" width="100%" height="auto">
+        <div class="illustration_content">
+          <h1>No task Found.</h1>
+          <p>The task no longer exists!</p>
+        </div>
+
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #TaskBlock>
+    <div class="detail_wrapper" [ngClass]="{'mobileDevice': systemSettingsService.isMobileDevice }">
+      <div *ngIf="!systemSettingsService.isMobileDevice ||!systemSettingsService.isLandscapeMode">
+        <div class="task_details_header">
+          <mat-icon (click)="performAction(DetailsPanelActions.Close)">arrow_back_ios</mat-icon>
+          <div class="options">
+            <button *ngIf="canSave" class="custom_btn danger" (click)="performAction(DetailsPanelActions.Discard)">
+              <mat-icon>delete_forever</mat-icon> Discard
+            </button>
+
+            <button *ngIf="canSave" class="custom_btn success" (click)="performAction(DetailsPanelActions.Save)">
+              <mat-icon>save_as</mat-icon> Save
+            </button>
+
+            <button *ngIf="isUpdateAvailable" class="custom_btn info"
+              (click)="performAction(DetailsPanelActions.Refresh)">
+              <mat-icon>restart_alt</mat-icon> Refresh
+            </button>
+
+            <mat-icon [matMenuTriggerFor]="menu" class="custom_vert_icon">more_vert</mat-icon>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngFor="let item of menuOptions" (click)="performAction(item)">
+                <span> {{ item }} </span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+        <div class="custom_options">
+          <button class="form-select form-select-sm custom_select_round"
+            [matTooltip]="isReadonly ? 'Readonly' : 'Select category'" matTooltipPosition="right"
+            matTooltipClass="tooltip-custom-secondary" [matMenuTriggerFor]="categorymenu" [disabled]="isReadonly"
+            [ngClass]="{'readonly': isReadonly }">
+            {{ category }}
+          </button>
+          <mat-menu #categorymenu="matMenu">
+            <button mat-menu-item *ngFor="let item of categories" (click)="category = item" [disabled]="isReadonly">
+              <span> {{ item }} </span>
+            </button>
+          </mat-menu>
+          <div class="theme_badge m-0" [ngClass]="{'completed': isCompleted, 'Open': !isCompleted}">
+            {{ isCompleted ? 'Completed' : 'Open' }}
+          </div>
+        </div>
+      </div>
+      <div class="task_details_content"
+        [ngClass]="{'landscapeMode': systemSettingsService.isMobileDevice && systemSettingsService.isLandscapeMode }">
+        <div class="task_subtask">
+          <div *ngIf="systemSettingsService.isMobileDevice && systemSettingsService.isLandscapeMode">
+            <div class="task_details_header">
+              <mat-icon (click)="performAction(DetailsPanelActions.Close)">arrow_back_ios</mat-icon>
+              <div class="options">
+                <button *ngIf="canSave" class="custom_outline_button custom_discard_button mr-2"
+                  (click)="performAction(DetailsPanelActions.Discard)">Discard</button>
+                <button *ngIf="canSave" class="custom_outline_button custom_save_button"
+                  (click)="performAction(DetailsPanelActions.Save)">Save</button>
+                <mat-icon [matMenuTriggerFor]="menu" style="margin-right: -5px;">more_vert</mat-icon>
+                <mat-menu #menu="matMenu" xPosition="before">
+                  <button mat-menu-item *ngFor="let item of menuOptions" (click)="performAction(item)">
+                    <span> {{ item }} </span>
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+            <div class="custom_options">
+              <div class="form-select form-select-sm custom_select_round" [matMenuTriggerFor]="categorymenu"> {{
+                category }}
+              </div>
+              <mat-menu #categorymenu="matMenu">
+                <button mat-menu-item *ngFor="let item of categories" (click)="category = item">
+                  <span> {{ item }} </span>
+                </button>
+              </mat-menu>
+              <div class="theme_badge m-0" [ngClass]="{'completed': isCompleted, 'Open': !isCompleted}">
+                {{ isCompleted ? 'Completed' : 'Open' }}
+              </div>
+            </div>
+          </div>
+          <div class="task_heading">
+            <textarea rows="3" [(ngModel)]="title" class="custom_textarea" [ngClass]="{'readonly': isReadonly}"
+              placeholder="Add Task Title" [readonly]="isReadonly"></textarea>
+          </div>
+          <div class="subtask_input">
+            <app-subtask-unit *ngFor="let subtask of subtasks; let last = last;" [subTask]="subtask" [last]="last"
+              (remove)="deleteSubTask(subtask.id)" [autofocus]="false" (addSubtaskEvent)="addSubtask(true)"
+              [isDisabled]="isReadonly">
+            </app-subtask-unit>
+            <button *ngIf="!isReadonly" mat-button (click)="addSubtask(true)" color="primary"
+              style="padding: 0; margin: 5px 0; display: flex; align-items: center; font-size: small;">
+              <mat-icon>add</mat-icon> <span>Add Sub-task</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="task_metadata">
+          <app-metadata-unit [isDisabled]="isReadonly" disableTitle="Readonly mode" icon="event_note" label="Due Date"
+            value="{{dueDate ? (dueDate | date: 'mediumDate') : 'No'}}" (clicked)="setMetadata()">
+          </app-metadata-unit>
+
+          <app-time-picker [selectedDate]="selectedDate" [time]="dueDate" (timeUpdateEvent)="updateTime($event)"
+            [isDisabled]="!dueDate || isReadonly"
+            [disableTitle]="isReadonly ? 'Readonly mode' : 'Please set date first'">
+          </app-time-picker>
+
+          <app-metadata-unit icon="notifications" label="Reminder" [isDisabled]="!dueDate || isReadonly"
+            [disableTitle]="isReadonly ? 'Readonly mode' : 'Please set time first'"
+            [value]="reminder.isReminderOn ? reminder.remindAt : 'No'" (clicked)="dueDate && openReminderModal()">
+          </app-metadata-unit>
+
+          <app-metadata-unit icon="repeat" label="Repeat" [isDisabled]="isReadonly" disableTitle="Readonly mode"
+            [value]="repeatedTask.isRepeated ? repeatedTask.interval : 'No'" (clicked)="openRepeatModal()">
+          </app-metadata-unit>
+
+          <app-metadata-unit icon="edit_note" label="Notes" [hideBorder]="true" [value]="''">
+          </app-metadata-unit>
+
+          <div class="task_notes border_default_color">
+            <textarea rows="5" [(ngModel)]="notes" class="custom_textarea" placeholder="Add Notes"
+              [readonly]="isReadonly" [ngClass]="{'readonly': isReadonly}"></textarea>
+          </div>
+
+          <app-metadata-unit icon="attach_file" style="margin-top: 5px;" label="Attachment(s)" [hideBorder]="true"
+            [value]="attachments.length > 0 ? 'EDIT' : 'ADD' ">
+          </app-metadata-unit>
+
+          <div class="tasks_attachments">
+            <p *ngFor="let item of attachments"> {{ item }} </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </ng-template>
+</ng-template>

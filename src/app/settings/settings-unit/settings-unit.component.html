@@ -1,0 +1,13 @@
+<div class="settings_unit border_default_color" [ngClass]="{'no_border': hideBorder}">
+  <div class="settings_unit_info">
+    <div class="settings_unit_icon">
+      <mat-icon> {{ icon }} </mat-icon>
+    </div>
+    <div class="settings_unit_text">
+      {{ text }}
+    </div>
+  </div>
+  <div class="settings_unit_control">
+    <ng-content></ng-content>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="task_unit_container theme_bg_default" *ngIf="task">
+  <div class="task_unit_checkbox">
+    <i class="theme_icon_primary" [ngClass]="{ 'far fa-circle': !task.completed, 'fa fa-check-circle complete': task.completed }" (click)="toggleEvent.emit(task.id)"></i>
+  </div>
+  <div class="task_unit_details" (click)="taskDetails()">
+    <div class="task_unit_details_title" [ngClass]="{'completed': task.completed }">
+      {{ task.title }}
+    </div>
+    <div class="task_unit_metadata_container" [ngClass]="{'completed': task.completed }" *ngIf="displayMetaData">
+      <div class="task_unit_metadata" *ngIf="task.dueDate === currentDate"> {{ task.dueDate | date: 'mediumDate' }} </div>
+      <div class="task_unit_metadata theme_icon_secondary" *ngIf="task.repeatedTask.isRepeated">
+        <mat-icon>repeat</mat-icon>
+      </div>
+      <div class="task_unit_metadata theme_icon_secondary" *ngIf="task.reminder.isReminderOn">
+        <mat-icon>notifications_active</mat-icon>
+      </div>
+      <div class="task_unit_metadata theme_icon_secondary" *ngIf="task.subtasks.length > 0">
+        <mat-icon>account_tree</mat-icon>
+      </div>
+      <div class="task_unit_metadata theme_icon_secondary" *ngIf="!!task.notes">
+        <mat-icon>article</mat-icon>
+      </div>
+      <div class="task_unit_metadata theme_icon_secondary" *ngIf="task.attachments.length > 0">
+        <mat-icon>attach_file</mat-icon>
+      </div>
+    </div>
+  </div>
+  <div class="task_unit_delete">
+    <mat-icon class="delete theme_icon_danger" (click)="deleteEvent.emit(task.id)" >delete</mat-icon>
+  </div>
+</div>

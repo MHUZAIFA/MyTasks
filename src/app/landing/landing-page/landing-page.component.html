@@ -1,0 +1,54 @@
+<!-- [ngClass]="systemSettingsService.currentTheme" -->
+<div class="landing_container Dark" >
+  <header>
+      <div class="mb_header unselectable">
+          <div>
+              <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+                  <mat-icon>polymer</mat-icon>
+              </button>
+              <span>My Tasks</span>
+          </div>
+          <div>
+              <span class="mb_link">Contact</span>
+              <span class="mb_link" [routerLink]="['/login']">Sign In</span>
+          </div>
+      </div>
+  </header>
+
+  <div class="landing_content_wrapper unselectable">
+      <div class="content_details">
+          <h1 class="tag_line">
+            Your own personalized Checklist
+          </h1>
+          <span class="description">
+            Manage your day to day general tasks all at one place on the go at your fingertips.
+          </span>
+          <button mat-raised-button class="start_saving" [routerLink]="['/register']">
+              Begin your journey today <mat-icon>trending_flat</mat-icon>
+          </button>
+          <br>
+          <p style="cursor: pointer; text-decoration: underline;" routerLink="/guest-signup" > Login as a guest </p>
+      </div>
+  </div>
+
+  <div>
+      <footer class="unselectable custom_footer">
+          <mat-toolbar>
+              <button mat-button style="font-size: medium; line-height: 40px;">Follow us</button>
+              <span class="example-spacer"></span>
+              <button mat-icon-button class="example-icon favorite-icon"
+                  aria-label="Example icon-button with heart icon">
+                  <fa-icon [icon]="twitter" style="font-size: large;"></fa-icon>
+              </button>
+              <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+                  <fa-icon [icon]="instagram" style="font-size: large;"></fa-icon>
+              </button>
+              <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+                  <fa-icon [icon]="facebook" style="font-size: large;"></fa-icon>
+              </button>
+          </mat-toolbar>
+      </footer>
+  </div>
+
+
+</div>

@@ -1,0 +1,32 @@
+<div class="metadata_container" [ngClass]="{'landscapeMode': systemSettingsService.isMobileDevice && systemSettingsService.isLandscapeMode }">
+  <div class="custom_date">
+    <mat-calendar [(selected)]="selectedDate" (selectedChange)="dueDateUpdate()"></mat-calendar>
+  </div>
+
+  <div class="custom_metadata">
+    <div class="custom_badge_container">
+      <span class="theme_badge" [ngClass]="{'selected': item === selectedJumpTo}" *ngFor="let item of DateOptions"
+        (click)="jumpToDate(item)">
+        {{ item }}
+      </span>
+    </div>
+
+    <app-time-picker [selectedDate]="selectedDate" [time]="metadata.dueDate" (timeUpdateEvent)="updateTime($event)"
+      [isDisabled]="!metadata.dueDate" disableTitle="Please set date first"></app-time-picker>
+
+    <app-metadata-unit icon="notifications" label="Reminder" [isDisabled]="!selectedDate"
+      disableTitle="Please set time first" [value]="metadata.reminder.isReminderOn ? metadata.reminder.remindAt : 'No'"
+      (clicked)="selectedDate && openReminderModal()">
+    </app-metadata-unit>
+
+    <app-metadata-unit icon="repeat" label="Repeat"
+      [value]="metadata.repeatedTask.isRepeated ? metadata.repeatedTask.interval : 'No'" (clicked)="openRepeatModal()">
+    </app-metadata-unit>
+
+    <div class="metadata_action">
+      <button class="custom_modal_btn custom_secondary" mat-button (click)="onCanelClicked()">Cancel</button>
+      <button class="custom_modal_btn" mat-button [mat-dialog-close]="metadata" color="primary">Done</button>
+    </div>
+  </div>
+
+</div>

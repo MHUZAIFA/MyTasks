@@ -1,0 +1,45 @@
+<ng-container *ngIf="(loading$ | async) && (tasks$ | async)?.length === 0; then loadingBlock; else loadedBlock"></ng-container>
+<ng-template #loadingBlock></ng-template>
+<ng-template #loadedBlock>
+  <div class="task_list_wrapper">
+    <ng-container *ngIf="(tasks$ | async)?.length === 0 && !isSearchMode; then NoTasksBlock; else ResultBlock"></ng-container>
+    <ng-template #NoTasksBlock>
+      <div class="illustration custom_illustration add_delay">
+        <img src="../../../../assets/illustrations/add_tasks.svg" alt="no_task_selected" width="100%" height="auto">
+        <div class="illustration_content add_task">
+          <h1>
+            Let's begin by adding a new task
+          </h1>
+          <p>
+            Click at the button below or at the bottom right to add a new task to your todo list.
+          </p>
+          <button class="custom_button" (click)="openBottomSheet()" >
+            Add Task
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #ResultBlock>
+    <ng-container *ngIf="(tasks$ | async)?.length === 0 && isSearchMode; then NoSearchResultBlock; else ListBlock"></ng-container>
+    <ng-template #NoSearchResultBlock>
+      <div class="illustration custom_illustration">
+        <img *ngIf="!searchModeActive" src="../../../../assets/illustrations/empty_cart.svg" alt="no_task_selected" width="80%" height="auto">
+        <div class="illustration_content">
+          <h1>No tasks found.</h1>
+          <p>
+            Try searching for something more general, change the filters or check for spelling mistakes
+          </p>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #ListBlock>
+      <app-task-list-unit *ngFor="let task of tasks$ | async" [task]="task"
+        (deleteEvent)="deleteTask($event)" (toggleEvent)="toggleTask($event)">
+      </app-task-list-unit>
+      <p class="theme_footer"> End of the list... </p>
+    </ng-template>
+    </ng-template>
+  </div>
+
+</ng-template>
+

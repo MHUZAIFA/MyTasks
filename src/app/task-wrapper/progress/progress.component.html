@@ -1,0 +1,12 @@
+<div class="w-100" style="padding: 1% 0;">
+  <p style="font-weight: 500; display: flex; justify-content: space-between; width: 100%;">
+    <span style="display: flex; width: fit-content; align-items: flex-end; font-size: small;">
+      {{ selectedCateory ? selectedCateory : '' }} Progress
+      <span style="font-size: xx-small;"> &nbsp; ({{ completedCount }} of {{ totalCount }} tasks) </span>
+    </span>
+    <span><b>{{ progress }}%</b></span>
+  </p>
+  <p>
+    <ngb-progressbar [value]="progress" height=".4rem"></ngb-progressbar>
+  </p>
+</div>

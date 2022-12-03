@@ -1,0 +1,22 @@
+<div *ngIf="reminder" class="reminder_wrapper">
+  <div class="reminder_heading">
+    <span>Reminder is {{ reminder.isReminderOn ? 'On' : 'Off' }}</span> &nbsp;
+    <mat-slide-toggle [(ngModel)]="reminder.isReminderOn" class="example-margin" [color]="color"
+      [checked]="reminder.isReminderOn" [disabled]="disabled">
+    </mat-slide-toggle>
+  </div>
+
+  <div class="reminder_remindat">
+    <span> Reminder at </span>
+    <button class="form-select form-select-sm custom_select" [disabled]="!reminder.isReminderOn" [matMenuTriggerFor]="menu"> {{ reminder.remindAt }}
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngFor="let item of remindAT" (click)="reminder.remindAt = item">{{ item }}</button>
+    </mat-menu>
+  </div>
+
+  <div class="reminder_actions">
+    <button class="custom_modal_btn custom_secondary theme_text_secondary" mat-button (click)="onCanelClicked()">Cancel</button>
+    <button class="custom_modal_btn" mat-button [mat-dialog-close]="reminder" color="primary">Done</button>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="task_list_header_wrapper">
+  <button class="theme_round_btn" mat-fab (click)="openBottomSheet()" color="primary">
+    <mat-icon>add</mat-icon>
+  </button>
+  <input
+    type="text"
+    placeholder="Search for a task..."
+    class="form-control theme_text_input"
+    (focus)="searchInFocus()"
+    [(ngModel)]="taskListService.searchTerm"
+    id="tasksSearchText"
+    >
+  <div class="custom_task_list_badge_container">
+    <span class="theme_badge" [ngClass]="{'selected': item == selectedCategory, 'ml-0': first, 'mr-0': last}"
+      *ngFor="let item of categories; let first = first; let last = last;" (click)="showTasks(item)">
+      {{ item }}
+    </span>
+  </div>
+</div>

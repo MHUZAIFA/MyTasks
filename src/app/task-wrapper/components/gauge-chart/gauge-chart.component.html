@@ -1,0 +1,23 @@
+
+<div class="chart_title" *ngIf="false">
+  <span>{{ chartTile }}</span>
+  <button *ngIf="canReset" class="custom_save_button" (click)="onSelect(null)">Reset</button>
+</div>
+<ngx-charts-gauge
+  id="chart"
+  *ngIf="max && chartData"
+  [view]="view"
+  [scheme]="colorScheme"
+  [results]="chartData"
+  [legend]="legend"
+  [legendTitle]="legentTitle"
+  [legendPosition]="legendPosition"
+  (select)="onSelect($event)"
+  (activate)="onActivate($event)"
+  (deactivate)="onDeactivate($event)"
+  (window:resize)="onResize()"
+  [max]="max"
+  [bigSegments]="max"
+  [smallSegments]="3"
+  >
+</ngx-charts-gauge>

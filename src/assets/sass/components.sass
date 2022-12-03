@@ -1,0 +1,529 @@
+$box_shadown_default_btn: 0 2px 3px rgba(0, 0, 0, 0.3)
+$box_shadown_default_card: 0 2px 4px 0 rgba(0,0,0,0.3)
+$box_shadown_default_card_hover: 0 4px 8px 0 rgba(0,0,0,0.35)
+
+//landing
+.landing_container
+  background-color: $bg_primary
+  color: $text_default
+
+  .start_saving
+    border: 2px solid $text_default
+    color: $text_default
+// snackbar
+.custom-snackbar
+  background: $snackbar_bg_primary !important
+  white-space: pre-wrap
+
+/* tooltip */
+.tooltip-custom-primary
+  background-color: $btn_primary_bg_color
+  letter-spacing: 0.03rem
+
+.tooltip-custom-secondary
+  background-color: $btn_primary_bg_color
+  letter-spacing: 0.03rem
+// inputs
+.form-control input, .subtask_input input, textarea
+  color: $text_default
+  background-color: $bg_default
+
+.readonly
+  opacity: 0.75
+  color: #676767
+  cursor: not-allowed !important
+
+.theme_text_input
+  color: $text_default
+  background-color: $bg_default
+  border: 2px solid $border_color_default
+
+// bottom sheet
+.custom_bottom_sheet
+  background: $bottom_sheet_bg
+  border-top-left-radius: 20px
+  border-top-right-radius: 20px
+
+.theme_modal
+  .mat-dialog-container, .mat-calendar-body-cell-content, .mat-calendar-table-header, .mat-calendar-body-label
+    background: $modal_bg
+    color: $text_default
+
+  .mat-calendar-body-selected
+    background-color: $btn_primary_bg_color
+    color: $btn_primary_text_color
+
+//modal
+
+.cdk-overlay-container
+  .cdk-overlay-dark-backdrop
+    background: $backdrop
+
+.mat-dialog-container
+  background: $modal_bg
+  color: $text_default
+
+  mat-timepicker-dialog
+    .mat-toolbar.mat-primary
+      background: $modal_bg
+      color: $text_default
+
+      .time-frame
+        .select
+          color: $text_primary
+
+    .circle
+      background: $timepicker_bg
+      .inner-dot
+        background: $timepicker_inner_dot
+      .pointer
+        background: $timepicker_pointer_bg
+        .outer-dot
+          background: $timepicker_outer_dot_bg
+      .number
+        color: $timepicker_text
+
+        &.selected
+          background-color: $btn_primary_bg_color
+          color: $btn_primary_text_color
+
+    .mat-dialog-actions
+      .mat-button:first-child
+        color: $text_default
+// badges
+.theme_badge
+  padding: 2px 10px
+  border: none
+  margin: 5px
+  font-size: smaller
+  display: inline-block
+  color: $text_default
+  border-radius: 4px
+  cursor: pointer
+  text-align: center
+  background-color: $bg_default
+
+  &.selected
+    background-color: $btn_primary_bg_color
+    color: $btn_primary_text_color
+
+    &.disabled
+      background-color: $btn_disabled_bg_color !important
+      color: $btn_disabled_text_color
+
+  &.completed
+    background-color: $badge_success_color
+    color: $btn_primary_text_color
+
+  &.Open
+    background-color: $badge_info_color
+    color: $btn_primary_text_color
+
+  &.disabled
+    background-color: $bg_secondary !important
+    color: $text_disabled
+
+// custom buttons
+.custom_btn
+  &.success
+    background-color: $btn_primary_bg_color
+    color: $btn_primary_text_color
+
+  &.danger
+    background-color: $btn_muted_bg_color
+    color: $btn_danger_text_color
+
+  &.info
+    background-color: $btn_info_bg_color
+    color: $btn_info_text_color
+
+.custom_modal_btn
+  &.custom_secondary
+    color: $text_default
+
+.mat-button
+  .mat-button-focus-overlay
+    background-color: transparent !important
+
+  &.mat-primary
+    background: none !important
+    color: $text_primary
+
+.custom_outline_button
+  background-color: transparent
+  border-radius: 2px
+  padding: 2px 8px
+  margin-right: 10px
+  letter-spacing: 0.01rem
+
+  &.custom_save_button
+    border: 1.5px solid $btn_primary_bg_color
+    color: $text_primary
+
+    &:hover
+      background-color: $btn_primary_bg_color
+      color: $btn_primary_text_color
+
+  &.custom_discard_button
+    border: 1.5px solid $btn_danger_bg_color
+    color: $text_danger
+
+    &:hover
+      background-color: $btn_danger_bg_color
+      color: $btn_danger_text_color
+
+.custom_button
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-grow: 1
+  margin: 0 1%
+  border-radius: 3px
+
+  &.btn_sync
+    background-color: $btn_primary_bg_color
+
+  &.btn_logout
+    background-color: $btn_muted_bg_color
+
+.theme_round_btn
+  z-index: 10
+  &:not(:disabled)
+    background-color: $btn_primary_bg_color !important
+
+// icons
+.theme_icon_primary
+  color: $icon_primary_color
+
+.theme_icon_secondary
+  color: $icon_secondary_color
+
+.theme_icon_danger
+  color: $icon_danger_color
+
+.theme_icon_info
+  color: $icon_info_color
+
+// illustrations
+
+.illustration
+  display: flex
+  flex-direction: column
+  width: 100%
+  // height: 100vh
+  justify-content: center
+  align-items: center
+
+  .illustration_content
+    display: flex
+    width: 100%
+    justify-content: flex-start
+    align-items: flex-start
+    flex-direction: column
+    margin-top: 30px
+    margin-bottom: 62px
+
+    .custom_button
+      display: flex
+      justify-content: center
+      align-items: center
+      width: fit-content
+      padding: 10px 30px
+      cursor: pointer
+      border-radius: 4px
+      background-color: $btn_primary_bg_color
+      color: $btn_primary_text_color
+      border: none
+      margin-top: 10px
+
+  .text
+    margin-top: 50px
+    margin-bottom: 50px
+
+  &.custom_illustration
+    justify-content: flex-end
+    height: 100%
+
+  &.add_delay
+    animation: cssAnimation 0s 0.5s forwards
+    visibility: hidden
+
+    @keyframes cssAnimation
+      100%
+        visibility: visible
+
+
+
+// charts
+ngx-charts-gauge
+  fill: $text_default
+  .background-arc
+    .arc-group
+      .arc
+        fill: $gauge_chart_background_arc_fill_color
+  .legend-labels
+    background-color: $bg_default
+
+
+// select
+.custom_select_round
+  border-radius: 15px
+  background-color: $bg_default
+  font-size: smaller
+  border: none
+  padding-left: 1rem
+  cursor: pointer
+  box-shadow: none
+  color: $text_default
+
+.theme_label
+  color: $text_default
+  margin: 10px 0
+
+.custom_select, .custom_input
+  border-radius: 4px
+  background-color: $bg_secondary
+  font-size: smaller
+  border: none
+  padding-left: 1rem
+  cursor: pointer
+  box-shadow: none
+  color: $text_default
+  width: max-content
+  height: 30px
+
+
+  &:disabled
+    background-color: $btn_disabled_bg_color
+    color: $btn_disabled_text_color
+
+.custom_input
+  height: 50px
+  margin-bottom: 5px
+  border: 2px solid $login_border
+  background-color: $login_card_bg_secondary
+  border-radius: 3px
+  font-size: small
+
+  &:not(:disabled):focus
+    border: 2px solid $text_primary
+// task create
+
+.task_create_wrapper
+  .task_submit
+    .btn_submit
+      &:not(:disabled)
+        background-color: $btn_primary_bg_color
+
+      &:disabled
+        background-color: $btn_disabled_bg_color
+        color: $btn_disabled_text_color
+
+  .task_create_options
+    .custom_icon
+      color: $icon_secondary_color
+
+.theme_text_secondary
+  color: $text_secondary
+
+.theme_bg_secondary
+  background: $bg_secondary
+
+.theme_bg_default
+  background: $bg_default
+
+// subtask unit
+.subtask_checkbox
+  i
+    color: $icon_info_color
+
+    &.completed
+      color: $icon_success_color
+
+.subtask_input
+  input
+    &.completed
+      color: $text_disabled
+
+// stat cards
+.stat_card_bg_1
+  background-color: $stat_card_1
+
+.stat_card_bg_2
+  background-color: $stat_card_2
+
+.stat_card_bg_3
+  background-color: $stat_card_3
+
+
+// progress bar
+.progress
+  background-color: $bg_default
+  .progress-bar
+    background-color: $progress
+
+// borders
+.border_default_color
+  border-color: $border_color_default
+
+// toggle
+.mat-slide-toggle
+  &.mat-primary.mat-checked
+    .mat-slide-toggle-thumb
+      background-color: $btn_primary_bg_color
+
+    .mat-slide-toggle-bar
+      background-color: $sliding_toggle_bg
+
+// mat-menu
+.mat-menu-panel
+  background-color: $bg_dropdown_menu
+  .mat-menu-item
+    color: $text_default
+
+    span
+      padding: 10px
+      border-radius: 3px
+      display: block
+      line-height: initial
+      &:hover
+        background-color: $btn_primary_bg_color
+        color: $btn_primary_text_color
+
+
+
+// footer
+.theme_footer
+  color: $text_primary
+
+// .settings
+.settings_unit_control
+  .mat-button
+    border: 2px solid $text_primary
+    color: $text_primary
+
+// login, register etc
+.sign_in_container
+  background-color: $bg_primary
+  color: $text_default
+
+  .sign_in_header_content
+    h3
+      font-weight: 500
+      letter-spacing: 0.01rem
+      color: $text_primary
+
+  .card
+    box-shadow: $box_shadown_default_card
+    background-color: $login_card_bg
+    color: $text_default !important
+    border: 2px solid $login_border
+    border-radius: 3px
+    padding: 20px
+
+    .btn_sigin
+      border: 2px solid $login_border
+      background-color: $login_card_bg_secondary
+      color: $text_default
+      border-radius: 3px
+      margin: 20px 10px
+
+      &:hover
+        color: $text_primary
+
+      i
+        line-height: 20px
+        font-size: 20px
+
+    .custom_redirect_link
+      text-decoration: none
+      cursor: pointer
+      font-weight: 500
+      letter-spacing: 0.01rem
+      color: $text_primary
+
+    // &:hover
+    //   box-shadow: $box_shadown_default_card_hover
+
+    button
+      border-radius: 3px
+      margin: 20px 0
+
+      &:not(:disabled)
+        box-shadow: $box_shadown_default_btn
+        border: none
+
+    &.mobile
+      border: none
+      box-shadow: none
+      padding: 20px 0
+
+      .btn_sigin
+        margin-top: 0
+        margin-bottom: 40px
+
+      button
+        margin-top: 40px
+
+.btn_next
+  background-color: $btn_primary_bg_color
+  color: $btn_primary_text_color
+
+  &:disabled
+    background-color: $btn_disabled_bg_color
+    color: $btn_disabled_text_color
+
+.landing_container
+  .tag_line
+    color: $text_primary
+
+  .custom_footer
+    .mat-toolbar
+      color: $text_default
+
+
+
+
+
+
+
+
+
+// placeholders
+::-webkit-input-placeholder
+  /* WebKit, Blink, Edge */
+  color: $text_placeholder
+
+:-moz-placeholder
+  /* Mozilla Firefox 4 to 18 */
+  color: $text_placeholder
+  opacity:  1
+
+::-moz-placeholder
+  /* Mozilla Firefox 19+ */
+  color: $text_placeholder
+  opacity:  1
+
+:-ms-input-placeholder
+  /* Internet Explorer 10-11 */
+  color: $text_placeholder
+
+::-ms-input-placeholder
+  /* Microsoft Edge */
+  color: $text_placeholder
+
+::placeholder
+  /* Most modern browsers support this now. */
+  color: $text_placeholder
+
+
+// time component header fix
+.mat-toolbar
+  .placeholder
+    display: none
+
+.unselectable
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none

@@ -1,0 +1,45 @@
+.metadata_container
+  display: flex
+  flex-direction: column
+  width: 100%
+
+  &.landscapeMode
+    flex-direction: row
+
+    .custom_date, .custom_metadata
+      display: flex
+      flex-direction: column
+      justify-content: space-between
+      width: 50%
+
+    .custom_metadata
+      padding-left: 15px
+
+      .custom_badge_container
+        justify-content: flex-start
+
+  .custom_badge_container
+    display: flex
+    flex-direction: row
+    flex-wrap: wrap
+    margin-bottom: 10px
+    justify-content: space-between
+
+    .theme_badge
+      padding: 2px 8px
+
+  .metadata_action
+    display: flex
+    flex-direction: row
+    justify-content: flex-end
+
+    .custom_modal_btn
+      padding: 0
+      width: fit-content
+      min-width: unset
+      background: transparent !important
+      margin-top: 10px
+      line-height: unset
+
+      &.custom_secondary
+        margin-right: 10px

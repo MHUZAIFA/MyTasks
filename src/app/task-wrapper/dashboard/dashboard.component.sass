@@ -1,0 +1,124 @@
+.dashboard_wrapper
+  display: flex
+  height: 100vh
+  width: 100%
+  justify-content: space-between
+
+  .tasks_overview, .tasks_content, .task_details
+    width: 33.33%
+    padding: 24px
+    height: 100%
+
+    .wrapper_content
+      display: flex
+      flex-direction: column
+      justify-content: space-between
+      align-items: stretch
+      overflow: hidden
+      height: calc( 100vh - 48px )
+      width: 100%
+
+      .content
+        display: flex
+        flex-direction: column
+        flex-grow: 1
+        height: 100%
+        width: 100%
+
+        ::ng-deep.custom_illustration_chart
+          height: 100%
+          justify-content: flex-end
+          align-items: flex-start
+
+
+  &.mobileDevice
+    flex-direction: column
+    height: 100vh
+    position: absolute
+
+
+    &.landscapeMode
+      flex-direction: row
+
+      .tasks_overview
+        width: 45vw
+
+        .wrapper_content
+          padding: 0
+          height: 100vh
+
+          .content
+            justify-content: center
+            height: 100vh
+
+      .tasks_content
+        width: 55vw
+        height: 100%
+
+        .wrapper_content
+          height: 100%
+          padding: 20px 0px
+
+          ::ng-deep.task_list_wrapper
+            height: calc( 100vh - 125px )
+
+    .tasks_overview, .tasks_content, .task_details
+      width: 100vw
+      padding: 0 15px
+
+    .tasks_overview
+      height: 30vh
+      .wrapper_content
+        padding-top: 20px
+        height: inherit
+
+        .content
+          height: unset
+          justify-content: space-between
+
+
+          ::ng-deep.greeting_wrapper
+            margin-bottom: 2%
+
+          ::ng-deep.stats_wrapper
+            .stat_card
+              padding: 5%
+              margin: 0 2%
+              min-height: 90px
+              min-width: 90px
+              justify-content: space-between
+
+              .stat
+                margin-bottom: 10px
+
+                .stat_title
+                  font-size: x-small
+
+
+    .tasks_content
+      height: 70vh
+      overflow-y: unset
+
+      .wrapper_content
+        height: inherit
+        padding-top: 10px
+
+        .content
+          height: unset
+
+          ::ng-deep.task_list_header_wrapper
+            padding-top: 2%
+
+          ::ng-deep.task_list_wrapper
+            height: calc(70vh - 120px)
+            overflow-y: auto
+
+            .illustration
+              justify-content: center
+
+              .illustration_content
+                margin-bottom: 30px
+
+            .theme_footer
+              display: flex
+              justify-content: flex-start

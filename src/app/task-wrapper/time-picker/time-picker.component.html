@@ -1,0 +1,11 @@
+<input class="hide" matTimepicker #t="matTimepicker" #time="ngModel" [strict]="false" id="timepicker-example" mode="24h"
+    [ngModel]="selectedDate" placeholder="Please select time..." name="time" class="hide" (timeChange)="timeChangeHandler($event)">
+<app-metadata-unit
+  matTimepicker
+  icon="schedule"
+  label="Time"
+  [isDisabled]="isDisabled"
+  [disableTitle]="disableTitle"
+  value="{{ timeString ? (timeString | date: 'shortTime') : 'No' }}"
+  (clicked)="!isDisabled && t.showDialog()">
+</app-metadata-unit>
