@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SystemSettingsService } from 'src/app/auth/services/system-settings.service';
 
 @Component({
   selector: 'app-task-details-default',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TaskDetailsDefaultComponent implements OnInit {
 
-  constructor() { }
+  constructor(public systemSettingsService: SystemSettingsService) { }
 
   ngOnInit(): void {
   }

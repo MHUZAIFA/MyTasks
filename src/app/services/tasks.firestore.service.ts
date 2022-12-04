@@ -24,7 +24,7 @@ export class TasksFirestoreService {
   taskUpdatedAvailable(taskId: string) : Observable<any> { return this._firestore.collection(Collections.TasksStore).doc(this.user.uid).collection(Collections.Tasks).doc(taskId).valueChanges() as Observable<any>; }
 
   getTasks() { return this._firestore.collection(Collections.TasksStore).doc(this.user.uid).collection(Collections.Tasks).ref.get(); }
-  getTaskById(id: string) { return this._firestore.collection(Collections.TasksStore).doc(this.user.uid).collection(Collections.Tasks).ref.where('id', '==', id).get(); }
+  getTaskById(id: string) { return this._firestore.collection(Collections.TasksStore).doc(this.user.uid).collection(Collections.Tasks).ref.where('taskId', '==', id).get(); }
   createTask(task: Task) { return this._firestore.collection(Collections.TasksStore).doc(this.user.uid).collection(Collections.Tasks).add(JSON.parse(JSON.stringify(task))); }
   updateTask(task: Task) { return this._firestore.collection(Collections.TasksStore).doc(this.user.uid).collection(Collections.Tasks).doc(task.id).set(JSON.parse(JSON.stringify(task)), { merge: true }); }
   deleteTask(id: string) { return this._firestore.collection(Collections.TasksStore).doc(this.user.uid).collection(Collections.Tasks).doc(id).delete(); }

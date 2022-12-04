@@ -12,7 +12,7 @@ export class OfflineComponent implements OnInit {
   constructor(public systemSettingsService: SystemSettingsService, private router: Router) { }
 
   ngOnInit(): void {
-    this.systemSettingsService.createOnline$().subscribe(isOnline => {
+    this.systemSettingsService.isOnline$().subscribe(isOnline => {
       if (isOnline) {
         if (this.systemSettingsService.isMobileDevice) {
           this.router.navigateByUrl(this.systemSettingsService.basePath);

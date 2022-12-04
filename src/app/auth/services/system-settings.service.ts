@@ -104,7 +104,7 @@ export class SystemSettingsService {
     this.updateTheme(theme);
   }
 
-  createOnline$(): Observable<boolean> {
+  isOnline$(): Observable<boolean> {
     return merge(
       fromEvent(window, 'offline').pipe(map(() => false)),
       fromEvent(window, 'online').pipe(map(() => true)),

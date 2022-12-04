@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Task } from '../task-wrapper/models/task';
-import { GeneralTaskService } from './general.task..service';
+import { TasksService } from './tasks.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,11 +23,11 @@ export class TaskDataService {
     return this._loading$.asObservable();
   }
 
-  constructor(private _taskService: GeneralTaskService) { }
+  constructor(private _taskService: TasksService) { }
 
   public loadTasks() {
     this._loading$.next(true);
-    this._taskService.instance
+    this._taskService
       .getTasks()
       .then((data) => {
         this._tasks$.next(data);

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Task } from 'src/app/task-wrapper/models/task';
 import { SystemSettingsService } from 'src/app/auth/services/system-settings.service';
 import { Router } from '@angular/router';
+import { PanelService } from 'src/app/services/panel.service';
 
 @Component({
   selector: 'app-task-list-unit',
@@ -27,9 +28,9 @@ export class TaskListUnitComponent implements OnInit {
   taskDetails() {
     if (this.task) {
       if (this.systemSettingsService.isMobileDevice) {
-        this.router.navigate(['tasks', this.task.id]);
+        this.router.navigate(['tasks', this.task.taskId]);
       } else {
-        this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: this.task.id } }]);
+        this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: this.task.taskId } }]);
       }
     }
   }

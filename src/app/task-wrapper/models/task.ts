@@ -35,6 +35,7 @@ export class Task extends TaskMetaData {
   uid: string;
   createdDate: Date;
   updatedDate: Date;
+  isDeleted: boolean;
 
   constructor(
     id: string,
@@ -52,7 +53,8 @@ export class Task extends TaskMetaData {
     completedDate: Date | null,
     uid: string,
     createdDate: Date,
-    updatedDate: Date) {
+    updatedDate: Date,
+    isDeleted: boolean) {
     super(dueDate, time, reminder, repeatedTask);
     this.id = id;
     this.taskId = taskId;
@@ -66,10 +68,11 @@ export class Task extends TaskMetaData {
     this.uid = uid;
     this.createdDate = createdDate;
     this.updatedDate = updatedDate;
+    this.isDeleted = isDeleted;
   }
 
   public clone(): Task {
-    return new Task(this.id, this.taskId, this.title, this.subtasks, this.category, this.dueDate, this.time, this.reminder, this.repeatedTask, this.notes, this.attachments, this.completed, this.completedDate, this.uid, this.createdDate, this.updatedDate);
+    return new Task(this.id, this.taskId, this.title, this.subtasks, this.category, this.dueDate, this.time, this.reminder, this.repeatedTask, this.notes, this.attachments, this.completed, this.completedDate, this.uid, this.createdDate, this.updatedDate, this.isDeleted);
   }
 }
 

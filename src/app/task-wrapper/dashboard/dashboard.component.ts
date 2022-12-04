@@ -48,12 +48,13 @@ export class DashboardComponent implements OnInit {
     private datePipe: DatePipe) { }
 
   ngOnInit(): void {
-    this.systemSettingsService.createOnline$().subscribe(isOnline => {
+    this.systemSettingsService.isOnline$().subscribe(isOnline => {
       if (isOnline) {
         this.m_taskDataService.loadTasks();
-      } else {
-        this.router.navigate(['offline']);
       }
+      // else {
+      //   this.router.navigate(['offline']);
+      // }
     });
     this.m_taskListService.tasks$.subscribe(tasks => {
       this.m_gaugeChartData = this.computeGaugeChartData(tasks);

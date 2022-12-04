@@ -21,11 +21,12 @@ export abstract class BaseTask {
   public createdDate: Date;
   public updatedDate: Date;
   public metadata: TaskMetaData;
+  public isDeleted: boolean;
 
   constructor() {
     const date = new Date();
     this.id = '';
-    this.taskId = UTILITY.GenerateUUID();
+    this.taskId = '';
     this.title = '';
     this.subtasks = [];
     this.category = CATEGORY.NOCATEGORY;
@@ -40,6 +41,7 @@ export abstract class BaseTask {
     this.uid = '';
     this.createdDate = date;
     this.updatedDate = date;
+    this.isDeleted = false;
     this.metadata = new TaskMetaData(null, null, new Reminder(false, RemindAT.FiveMinBefore), new RepeatedTask(false, INTERVAL.DAILY));
     this.original = this.getTaskInstance().clone();
   }
@@ -47,7 +49,7 @@ export abstract class BaseTask {
   reset() {
     const date = new Date();
     this.id = '';
-    this.taskId = UTILITY.GenerateUUID();
+    this.taskId = '';
     this.title = '';
     this.subtasks = [];
     this.category = CATEGORY.NOCATEGORY;
@@ -62,6 +64,7 @@ export abstract class BaseTask {
     this.uid = '';
     this.createdDate = date;
     this.updatedDate = date;
+    this.isDeleted = false;
     this.metadata = new TaskMetaData(null, null, new Reminder(false, RemindAT.FiveMinBefore), new RepeatedTask(false, INTERVAL.DAILY));
     this.original = this.getTaskInstance().clone();
   }
@@ -83,6 +86,7 @@ export abstract class BaseTask {
     this.uid = task.uid;
     this.createdDate = task.createdDate;
     this.updatedDate = task.updatedDate;
+    this.isDeleted = task.isDeleted;
     this.metadata = this.getMetadataInstance();
     this.original = this.getTaskInstance().clone();
   }
@@ -90,7 +94,7 @@ export abstract class BaseTask {
   getTaskInstance(): Task {
     const subtasks = this.subtasks.filter(s => s.subtitle.length > 0);
     this.subtasks = subtasks;
-    return new Task(this.id, this.taskId, this.title, this.subtasks, this.category, this.dueDate, this.time, this.reminder, this.repeatedTask, this.notes, this.attachments, this.completed, this.completedDate, this.uid, this.createdDate, this.updatedDate);
+    return new Task(this.id, this.taskId, this.title, this.subtasks, this.category, this.dueDate, this.time, this.reminder, this.repeatedTask, this.notes, this.attachments, this.completed, this.completedDate, this.uid, this.createdDate, this.updatedDate, this.isDeleted);
   }
 
   getMetadataInstance(): TaskMetaData {

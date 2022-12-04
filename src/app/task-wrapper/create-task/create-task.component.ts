@@ -2,14 +2,14 @@ import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { DeviceType, SystemSettingsService } from 'src/app/auth/services/system-settings.service';
-import { FormService } from 'src/app/services/form.service';
-import { GeneralTaskService } from 'src/app/services/general.task..service';
-import { PanelService } from 'src/app/services/panel.service';
-import { TaskListService } from 'src/app/services/task-list.service';
-import { TaskMetadataModalsService } from 'src/app/services/task-metadata-modals.service';
+import { TasksService } from 'src/app/services/tasks.service';
+import { DeviceType, SystemSettingsService } from '../../auth/services/system-settings.service';
+import { PanelService } from '../../services/panel.service';
+import { TaskListService } from '../../services/task-list.service';
+import { TaskMetadataModalsService } from '../../services/task-metadata-modals.service';
 import { BaseTask } from '../base-task';
 import { CATEGORY, Task, TaskMetaData } from '../models/task';
+import { UTILITY } from '../utilities/utility';
 
 @Component({
   selector: 'app-create-task',
@@ -27,12 +27,11 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
 
   constructor(
     private _bottomSheetRef: MatBottomSheetRef<CreateTaskComponent>,
-    public formService: FormService,
     private systemSettingsService: SystemSettingsService,
     private router: Router,
     private panelService: PanelService,
     public taskMetadataModalService: TaskMetadataModalsService,
-    private m_taskService: GeneralTaskService, private m_taskListService: TaskListService) {
+    private m_taskService: TasksService, private m_taskListService: TaskListService) {
     super();
   }
 
@@ -52,13 +51,14 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
 
   create() {
     const task: Task = this.getTaskInstance();
+    task.taskId = UTILITY.GenerateUUID();
     this.systemSettingsService.isSameDevice = true;
-    this.m_taskService.instance.createTask(task)
+    this.m_taskService.createTask(task)
       .then((id: string) => {
         this.m_taskListService.reload();
         if (this.systemSettingsService.deviceType === DeviceType.Desktop && !this.panelService.editMode) {
           setTimeout(() => {
-            this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: id } }]);
+            this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: task.taskId } }]);
           }, 200);
         }
       })

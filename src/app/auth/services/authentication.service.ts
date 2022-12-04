@@ -5,7 +5,7 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import * as firebase from 'firebase';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { User } from 'src/app/task-wrapper/models/user';
-import { SystemSettingsService } from './system-settings.service';
+import { SystemSettingsService, Theme } from './system-settings.service';
 import { UTILITY } from 'src/app/task-wrapper/utilities/utility';
 
 @Injectable({
@@ -31,13 +31,13 @@ export class AuthenticationService {
 
     this.afAuth.authState.subscribe(user => {
       if (user) {
-        this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false);
+        this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false, true, Theme.System);
         localStorage.setItem('user', JSON.stringify(this.userData));
         JSON.parse(localStorage.getItem('user') as string);
       } else {
         const user: User = JSON.parse(localStorage.getItem('user') as string) as User
         if (user) {
-          this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false);
+          this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false, user.isVibrationEnabled, user.selectedTheme);
         } else {
           localStorage.setItem('user', JSON.stringify(null));
           JSON.parse(localStorage.getItem('user') as string);
@@ -48,7 +48,7 @@ export class AuthenticationService {
 
   SignInAsGuest(displayName: string) {
     let photoURL = 'assets/imgs/no_user_profile.png';
-    this.userData = new User(UTILITY.GenerateUUID(), false, null, displayName.trim(), photoURL, true);
+    this.userData = new User(UTILITY.GenerateUUID(), false, null, displayName.trim(), photoURL, true, true, Theme.System);
     localStorage.setItem('user', JSON.stringify(this.userData));
     this.systemSettingsService.isGuestMode = true;
     this.redirectToDashboard();
@@ -64,7 +64,7 @@ export class AuthenticationService {
           this.redirectToDashboard();
         });
         if (result.user) {
-          const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false);
+          const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
           this.SetUserData(userData);
         }
       }).catch((error) => {
@@ -82,7 +82,7 @@ export class AuthenticationService {
         if (result.user) {
           result.user.updateProfile({ displayName: displayName, photoURL: photoURL }).then(_ => {
             if (result.user) {
-              const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false);
+              const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
               this.SetUserData(userData);
             }
           });
@@ -149,7 +149,7 @@ export class AuthenticationService {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((result) => {
         if (result.user) {
-          const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false);
+          const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
           this.SetUserData(userData);
         }
         this.ngZone.run(() => {
@@ -171,7 +171,10 @@ export class AuthenticationService {
       displayName: user.displayName,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      isGuest: false
+      isGuest: false,
+      isVibrationEnabled: user.isVibrationEnabled,
+      selectedTheme: user.selectedTheme
+
     }
     this.systemSettingsService.isGuestMode = userData.isGuest;
     return userRef.set(userData, {

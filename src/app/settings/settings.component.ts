@@ -18,10 +18,24 @@ export class SettingsComponent {
   themes: Theme[] = [Theme.System, Theme.Light, Theme.Dark];
   theme: Theme = Theme.System;
   color: ThemePalette = 'primary';
+  get isDisabled(): boolean { return this.systemSettingsService.isOfflineMode; }
+  get disclaimerText(): string {
+    let text: string = '';
+    if (this.systemSettingsService.isGuestMode) {
+      text = 'Sign in to sync data to cloud. Logging out will delete your data.'
+    } else if (this.systemSettingsService.isOfflineMode) {
+      text = 'Connect to the internet to sync your data or to logout.'
+    }
+    return text;
+  }
 
   constructor(public systemSettingsService: SystemSettingsService, private router: Router, private authService: AuthenticationService, private m_taskListService: TaskListService) { }
 
-  logout() { this.authService.SignOut(); }
+  logout() {
+    if (!this.systemSettingsService.isOfflineMode) {
+      this.authService.SignOut();
+    }
+  }
 
   sync() {
     this.m_taskListService.reload();

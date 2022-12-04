@@ -84,7 +84,7 @@ export class TaskService extends HttpService implements ITaskService {
     });
   }
 
-  async updatetask(taskId: string, task: Task, message: SnackbarMessages = SnackbarMessages.TaskUpdated, vibrate: boolean): Promise<void> {
+  async updatetask(task: Task, message: SnackbarMessages = SnackbarMessages.TaskUpdated, vibrate: boolean): Promise<void> {
     task = this.sanitizeTask(task);
     task.updatedDate = new Date();
     task.uid = this.loggedInUser.uid;

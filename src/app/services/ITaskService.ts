@@ -8,6 +8,6 @@ export interface ITaskService {
   getTasks(): Promise<Task[]> ;
   getTaskById(id: string): Promise<Task | undefined>;
   createTask(task: Task): Promise<string>;
-  updatetask(taskId: string, task: Task, message: SnackbarMessages, vibrate: boolean): Promise<void>;
+  updatetask(task: Task, message: SnackbarMessages, vibrate: boolean): Promise<void>;
   deletetask(taskId: string): Promise<void>;
 }

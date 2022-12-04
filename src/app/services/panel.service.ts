@@ -18,6 +18,8 @@ export enum DetailsPanelActions {
 })
 export class PanelService {
 
+  public id: string = '';
+
   private m_editMode: boolean = false;
   public get editMode(): boolean { return this.m_editMode; }
   public set editMode(editMode: boolean) { this.m_editMode = editMode; }

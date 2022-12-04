@@ -11,8 +11,8 @@ import { UTILITY } from '../utilities/utility';
 import { TaskDataService } from 'src/app/services/task-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SystemSettingsService } from 'src/app/auth/services/system-settings.service';
-import { GeneralTaskService } from 'src/app/services/general.task..service';
 import { AlertComponent } from './alert/alert.component';
+import { TasksService } from 'src/app/services/tasks.service';
 
 @Component({
   selector: 'app-task-details',
@@ -49,7 +49,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
 
   constructor(
     private m_panelService: PanelService,
-    private m_taskService: GeneralTaskService,
+    private m_taskService: TasksService,
     private m_taskListService: TaskListService,
     private route: ActivatedRoute,
     private router: Router,
@@ -67,9 +67,10 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     const routeSub = this.route.params.subscribe(params => {
       const taskId = params['id'];
       if (!!taskId) {
-        this.id = taskId;
-        this.original.id = this.id;
-        this.loadTask(this.id);
+        this.taskId = taskId;
+        this.m_panelService.id = this.taskId;
+        this.original.taskId = this.taskId;
+        this.loadTask(this.taskId);
       }
     });
 
@@ -77,29 +78,29 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
       this.m_taskListService.searchTerm = '';
     }
 
-    const updateAvailableSub = this.m_taskService.instance.taskUpdatedAvailable(this.id)
-      .subscribe((updatedTaskAvailabe) => {
-        if (updatedTaskAvailabe !== null && !this.systemSettingsService.isSameDevice) {
-          if (!this.canSave) {
-            this.loadTask(this.id);
-          } else {
-            const dialogRef = this.dialog.open(AlertComponent);
-            dialogRef.componentInstance.alertTitle = 'Task details updated';
-            dialogRef.componentInstance.alertDescription = 'This task details has been update. Click refresh to get latest details or cancel to keep viewing the task details in read-only mode.';
-            dialogRef.componentInstance.color = 'primary';
-            dialogRef.componentInstance.alertPrimaryActionText = 'Refresh';
-            dialogRef.afterClosed().subscribe((result: boolean) => {
-              if (result) {
-                this.loadTask(this.id);
-              } else {
-                this.m_isUpdateAvailable = true;
-              }
-            });
-          }
-        }
-      });
+    // const updateAvailableSub = this.m_taskService.taskUpdatedAvailable(this.id)
+    //   .subscribe((updatedTaskAvailabe) => {
+    //     if (updatedTaskAvailabe !== null && !this.systemSettingsService.isSameDevice) {
+    //       if (!this.canSave) {
+    //         this.loadTask(this.id);
+    //       } else {
+    //         const dialogRef = this.dialog.open(AlertComponent);
+    //         dialogRef.componentInstance.alertTitle = 'Task details updated';
+    //         dialogRef.componentInstance.alertDescription = 'This task details has been update. Click refresh to get latest details or cancel to keep viewing the task details in read-only mode.';
+    //         dialogRef.componentInstance.color = 'primary';
+    //         dialogRef.componentInstance.alertPrimaryActionText = 'Refresh';
+    //         dialogRef.afterClosed().subscribe((result: boolean) => {
+    //           if (result) {
+    //             this.loadTask(this.id);
+    //           } else {
+    //             this.m_isUpdateAvailable = true;
+    //           }
+    //         });
+    //       }
+    //     }
+    //   });
 
-    this.subscriptions = [routeSub, updateAvailableSub];
+    this.subscriptions = [routeSub];
 
   }
 
@@ -119,7 +120,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
 
   loadTask(id: string) {
     this.m_loading = true;
-    this.m_taskService.instance.getTaskById(id)
+    this.m_taskService.getTaskById(id)
       .then((task: Task | undefined) => {
         if (!!task) {
           this.reset();
@@ -178,7 +179,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
       case DetailsPanelActions.Save:
         if (this.isValidTitle()) {
           this.systemSettingsService.isSameDevice = true;
-          this.m_taskService.instance.updatetask(this.id, this.getTaskInstance(), SnackbarMessages.TaskUpdated, false)
+          this.m_taskService.updatetask(this.getTaskInstance(), SnackbarMessages.TaskUpdated, false)
             .then(() => {
               this.m_taskListService.reload();
               this.setTask(this.getTaskInstance());
@@ -191,27 +192,28 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
         this.setTask(this.original);
         break;
       case DetailsPanelActions.Delete:
-        this.deleteTask(this.id);
+        this.deleteTask(this.taskId);
         break;
     }
   }
 
   private createDuplicateTask() {
+    this.id = '';
     this.taskId = UTILITY.GenerateUUID();
     this.completed = false;
     this.createdDate = new Date();
     this.title = this.title.trim() + ' - copy';
     this.systemSettingsService.isSameDevice = true;
-    this.m_taskService.instance.createTask(this.getTaskInstance())
+    this.m_taskService.createTask(this.getTaskInstance())
       .then((newTaskId) => {
         this.id = newTaskId;
         this.m_taskListService.reload();
         this.setTask(this.getTaskInstance());
         this.m_snackbarService.openSnackBar(SnackbarMessages.DuplicateCreated)
         if (this.systemSettingsService.isMobileDevice) {
-          this.router.navigate([this.systemSettingsService.basePath, this.id]);
+          this.router.navigate([this.systemSettingsService.basePath, this.taskId]);
         } else {
-          this.router.navigateByUrl(`${this.systemSettingsService.basePath}/(sidepanel:${this.id})`);
+          this.router.navigateByUrl(`${this.systemSettingsService.basePath}/(sidepanel:${this.taskId})`);
         }
       })
       .catch(error => console.error(error))
@@ -219,6 +221,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
   }
 
   private close() {
+    this.m_panelService.id = '';
     if (this.systemSettingsService.isMobileDevice) {
       this.router.navigate([this.systemSettingsService.basePath]);
     } else {
@@ -236,14 +239,17 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
   }
 
   private deleteTask(id: string) {
+    const task = this.m_taskListService.tasks.find(t => t.taskId === id);
+    if (task) {
     this.systemSettingsService.isSameDevice = true;
-    this.m_taskService.instance.deletetask(id)
+    this.m_taskService.deletetask(task)
       .then(() => this.m_taskListService.reload())
       .catch((error) => console.error(error))
       .finally(() => {
         this.systemSettingsService.isSameDevice = false;
         this.close();
       });
+    }
   }
 
   private toggleTask() {
@@ -253,7 +259,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
       this.original = this.getTaskInstance();
       const message = this.completed ? SnackbarMessages.TaskCompleted : SnackbarMessages.TaskRestored;
       this.systemSettingsService.isSameDevice = true;
-      this.m_taskService.instance.updatetask(this.id, this.getTaskInstance(), message, this.completed)
+      this.m_taskService.updatetask(this.getTaskInstance(), message, this.completed)
         .then(() => {
           this.m_taskListService.reload();
           this.setTask(this.getTaskInstance());
