@@ -14,10 +14,15 @@
           <h2> {{ user.displayName }} </h2>
           <p *ngIf="user.email"> {{ user.email }} </p>
           <div class="user_actions" *ngIf="!user.isGuest">
-            <button mat-raised-button color="primary" class="custom_button btn_sync ml-0" (click)="sync()" [disabled]="isDisabled">
-              Sync
-            </button>
-            <button mat-raised-button color="warn" class="custom_button btn_logout mr-0" (click)="logout()" [disabled]="isDisabled">
+            <div class="secondary_actions">
+              <button mat-raised-button color="primary" class="custom_button btn_edit ml-0" (click)="editUserInfo()" [disabled]="isDisabled">
+                Edit
+              </button>
+              <button mat-raised-button color="primary" class="custom_button btn_sync mr-0" (click)="sync()" [disabled]="isDisabled">
+                Sync
+              </button>
+            </div>
+            <button mat-raised-button color="warn" class="custom_button btn_logout mr-0 ml-0" (click)="logout()" [disabled]="isDisabled">
               Logout
             </button>
           </div>

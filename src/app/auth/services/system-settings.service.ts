@@ -100,6 +100,9 @@ export class SystemSettingsService {
     const theme: Theme = this.getTheme();
     const basePath = deviceType === DeviceType.Desktop ? BasePath.Desktop : BasePath.Mobile;
     this.m_systemConfig = new SystemConfig(deviceInfo, deviceType, orientation, theme, basePath);
+
+    this.isOnline$().subscribe(isOnline => this.isOfflineMode = !isOnline);
+
   }
 
   setTheme(theme: Theme) {

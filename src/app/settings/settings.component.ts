@@ -37,6 +37,10 @@ export class SettingsComponent {
     }
   }
 
+  editUserInfo() {
+
+  }
+
   sync() {
     this.m_taskListService.reload();
   }
@@ -50,7 +54,6 @@ export class SettingsComponent {
   }
 
   registerGuest() {
-    console.log('Register guest workflow is under construction');
     // set registration mode on
     this.systemSettingsService.isRegistrationMode = true;
     // redirect to register
