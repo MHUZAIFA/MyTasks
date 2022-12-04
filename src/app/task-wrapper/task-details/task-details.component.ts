@@ -78,28 +78,6 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
       this.m_taskListService.searchTerm = '';
     }
 
-    // const updateAvailableSub = this.m_taskService.taskUpdatedAvailable(this.id)
-    //   .subscribe((updatedTaskAvailabe) => {
-    //     if (updatedTaskAvailabe !== null && !this.systemSettingsService.isSameDevice) {
-    //       if (!this.canSave) {
-    //         this.loadTask(this.id);
-    //       } else {
-    //         const dialogRef = this.dialog.open(AlertComponent);
-    //         dialogRef.componentInstance.alertTitle = 'Task details updated';
-    //         dialogRef.componentInstance.alertDescription = 'This task details has been update. Click refresh to get latest details or cancel to keep viewing the task details in read-only mode.';
-    //         dialogRef.componentInstance.color = 'primary';
-    //         dialogRef.componentInstance.alertPrimaryActionText = 'Refresh';
-    //         dialogRef.afterClosed().subscribe((result: boolean) => {
-    //           if (result) {
-    //             this.loadTask(this.id);
-    //           } else {
-    //             this.m_isUpdateAvailable = true;
-    //           }
-    //         });
-    //       }
-    //     }
-    //   });
-
     this.subscriptions = [routeSub];
 
   }
@@ -127,6 +105,9 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
           this.setTask(task);
           this.m_isUpdateAvailable = false;
           this.m_isNotFound = false;
+          if (this.id) {
+            this.setupRealTimeSubscription();
+          }
         } else {
           this.m_isNotFound = true;
           console.error('Task not found for id: ' + id)
@@ -267,6 +248,31 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
         .catch((error) => console.error(error))
         .finally(() => this.systemSettingsService.isSameDevice = false);
     }
+  }
+
+  private setupRealTimeSubscription() {
+    const updateAvailableSub = this.m_taskService.taskUpdatedAvailable(this.id)
+      .subscribe((updatedTaskAvailabe) => {
+        if (updatedTaskAvailabe !== null && !this.systemSettingsService.isSameDevice) {
+          if (!this.canSave) {
+            this.loadTask(this.taskId);
+          } else {
+            const dialogRef = this.dialog.open(AlertComponent);
+            dialogRef.componentInstance.alertTitle = 'Task details updated';
+            dialogRef.componentInstance.alertDescription = 'This task details has been update. Click refresh to get latest details or cancel to keep viewing the task details in read-only mode.';
+            dialogRef.componentInstance.color = 'primary';
+            dialogRef.componentInstance.alertPrimaryActionText = 'Refresh';
+            dialogRef.afterClosed().subscribe((result: boolean) => {
+              if (result) {
+                this.loadTask(this.taskId);
+              } else {
+                this.m_isUpdateAvailable = true;
+              }
+            });
+          }
+        }
+      });
+      this.subscriptions.push(updateAvailableSub);
   }
 
 }

@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 import { DeviceType, SystemSettingsService } from 'src/app/auth/services/system-settings.service';
 import { PanelService, DetailsPanelActions } from 'src/app/services/panel.service';
@@ -16,23 +16,19 @@ import { Task } from '../../models/task';
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.sass']
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent implements OnInit, OnDestroy {
 
   @Input() searchModeActive: boolean = false;
   public get tasks$(): Observable<Task[]> { return this.m_taskListService.tasks$; }
   public get loading$(): Observable<boolean> { return this.m_taskListService.loading$; }
   public get isSearchMode(): boolean { return this.m_taskListService.isSearchMode; }
 
-  constructor(public taskService: TasksService, private _bottomSheet: MatBottomSheet, private m_taskListService: TaskListService, private m_panelService: PanelService, private _systemSettingsService: SystemSettingsService, private router: Router, private m_authService: AuthenticationService) {
-    // taskService.instance.tasksListUpdatedAvailable().subscribe(updateAvailable => {
-    //   if (updateAvailable !== null && !_systemSettingsService.isSameDevice) {
-    //     this.m_taskListService.reload();
-    //   }
-    // });
-  }
+  private subscriptions: Subscription[] = [];
+
+  constructor(public taskService: TasksService, private _bottomSheet: MatBottomSheet, private m_taskListService: TaskListService, private m_panelService: PanelService, private _systemSettingsService: SystemSettingsService, private router: Router, private m_authService: AuthenticationService) { }
 
   async ngOnInit() {
-    this._systemSettingsService.isOnline$().subscribe(async (isOnline) => {
+    const isOnlineSub = this._systemSettingsService.isOnline$().subscribe(async (isOnline) => {
       if (isOnline && !this.m_authService.loggedInUser.isGuest) {
         this._systemSettingsService.isOfflineMode = false;
         await this.taskService.synchronize();
@@ -43,6 +39,18 @@ export class TaskListComponent implements OnInit {
     });
     await this.taskService.synchronize();
     this.m_taskListService.reload();
+
+    const taskListSyncSub = this.taskService.tasksListUpdatedAvailable().subscribe(async (updateAvailable) => {
+      if (updateAvailable !== null && !this._systemSettingsService.isSameDevice) {
+        await this.taskService.synchronize();
+        this.m_taskListService.reload();
+      }
+    });
+    this.subscriptions = [isOnlineSub, taskListSyncSub];
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   openBottomSheet(): void {
@@ -52,16 +60,21 @@ export class TaskListComponent implements OnInit {
   deleteTask(taskId: string) {
     const task = this.m_taskListService.tasks.find(t => t.taskId === taskId);
     if (task) {
-      this._systemSettingsService.isSameDevice = true;
-      this.taskService.deletetask(task)
-        .then(() => {
-          this.m_taskListService.reload()
-          if (this._systemSettingsService.deviceType === DeviceType.Desktop) {
-            this.router.navigateByUrl(this._systemSettingsService.basePath + '/(sidepanel:default)');
-          }
-        })
-        .catch((error) => console.error(error))
-        .finally(() => this._systemSettingsService.isSameDevice = false);
+      if (this.m_panelService.id === taskId) {
+        const action: DetailsPanelActions = DetailsPanelActions.Delete;
+        this.m_panelService.performAction(action);
+      } else {
+        this._systemSettingsService.isSameDevice = true;
+        this.taskService.deletetask(task)
+          .then(() => {
+            this.m_taskListService.reload()
+            if (this._systemSettingsService.deviceType === DeviceType.Desktop) {
+              this.router.navigateByUrl(this._systemSettingsService.basePath + '/(sidepanel:default)');
+            }
+          })
+          .catch((error) => console.error(error))
+          .finally(() => this._systemSettingsService.isSameDevice = false);
+      }
     }
   }
 

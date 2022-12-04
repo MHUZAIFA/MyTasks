@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 export enum SnackbarMessages {
   NoUser = 'No user found!',
   AuthFailed = 'Incorrect Username or Password!',
-
   welcomeBack = 'Welcome Back',
   TaskCreated = 'Task Created successfully.',
   DuplicateCreated = 'Duplicate Task Created successfully.',

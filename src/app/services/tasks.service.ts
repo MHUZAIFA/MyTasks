@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { AuthenticationService } from '../auth/services/authentication.service';
 import { SystemSettingsService } from '../auth/services/system-settings.service';
 import { Task } from '../task-wrapper/models/task';
@@ -27,6 +28,9 @@ export class TasksService {
     private m_taskQueueService: TasksQueueService,
     private m_localTaskService: LocalTaskService,
     private m_systemSettingsService: SystemSettingsService) { }
+
+  public tasksListUpdatedAvailable(): Observable<any> { return this.m_taskFirestoreService.tasksListUpdatedAvailable(); }
+  public taskUpdatedAvailable(taskId: string): Observable<any> {  return taskId ? this.m_taskFirestoreService.taskUpdatedAvailable(taskId) : of(null); }
 
   async synchronize() {
     if (this.isOnline) {

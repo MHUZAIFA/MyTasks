@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DeviceDetectorService, DeviceInfo } from 'ngx-device-detector';
 import { merge, fromEvent, map, Observable, Observer } from 'rxjs';
-import { UTILITY } from 'src/app/task-wrapper/utilities/utility';
 
 export class SystemConfig {
   DeviceInfo: DeviceInfo;
