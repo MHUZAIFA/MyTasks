@@ -22,7 +22,7 @@ export class SettingsComponent {
   get disclaimerText(): string {
     let text: string = '';
     if (this.systemSettingsService.isGuestMode) {
-      text = 'Sign in to sync data to cloud. Logging out will delete your data.'
+      text = 'Register to sync data to cloud. Logging out without registration will delete your data.'
     } else if (this.systemSettingsService.isOfflineMode) {
       text = 'Connect to the internet to sync your data or to logout.'
     }
@@ -51,6 +51,10 @@ export class SettingsComponent {
 
   registerGuest() {
     console.log('Register guest workflow is under construction');
+    // set registration mode on
+    this.systemSettingsService.isRegistrationMode = true;
+    // redirect to register
+    this.router.navigateByUrl('register');
   }
 
   guestLogout() {

@@ -50,6 +50,10 @@ export class AuthenticationService {
     let photoURL = 'assets/imgs/no_user_profile.png';
     this.userData = new User(UTILITY.GenerateUUID(), false, null, displayName.trim(), photoURL, true, true, Theme.System);
     localStorage.setItem('user', JSON.stringify(this.userData));
+    const taskStore = localStorage.getItem('taskStore');
+    if (!taskStore) {
+      localStorage.setItem('taskStore', JSON.stringify([]));
+    }
     this.systemSettingsService.isGuestMode = true;
     this.redirectToDashboard();
   }
@@ -60,13 +64,26 @@ export class AuthenticationService {
     return this.afAuth.auth.signInWithEmailAndPassword(email, password)
       .then((result) => {
         this.ngZone.run(() => {
-          this._snackbarService.openSnackBar('Welcome back' + result.user?.displayName);
-          this.redirectToDashboard();
+          const currentUser = this.afAuth.auth.currentUser;
+          if (currentUser) {
+            this.userData = new User(currentUser.uid, currentUser.emailVerified, currentUser.email, currentUser.displayName, currentUser.photoURL, false, true, Theme.System);
+            this.SetUserData(this.userData);
+            localStorage.setItem('user', JSON.stringify(this.userData));
+            if (this.loggedInUser) {
+              const taskStore = localStorage.getItem('taskStore');
+              if (!taskStore) {
+                localStorage.setItem('taskStore', JSON.stringify([]));
+              }
+              this._snackbarService.openSnackBar('Welcome back ' + result.user?.displayName);
+              this.redirectToDashboard();
+            }
+            if (!currentUser.emailVerified) {
+              this._snackbarService.openSnackBar('Email id not yet verified.');
+              this.canResendVerficationEmail = true;
+              this.SendVerificationMail();
+            }
+          }
         });
-        if (result.user) {
-          const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
-          this.SetUserData(userData);
-        }
       }).catch((error) => {
         this._snackbarService.openSnackBar('Incorrect username or password');
       })
@@ -84,10 +101,13 @@ export class AuthenticationService {
             if (result.user) {
               const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
               this.SetUserData(userData);
+              localStorage.setItem('user', JSON.stringify(this.userData));
+              this.canResendVerficationEmail = true;
+              this.SendVerificationMail();
             }
           });
         }
-        this.SendVerificationMail();
+
       }).catch((error) => {
         this._snackbarService.openSnackBar(error.message);
         // window.alert(error.message)
@@ -103,7 +123,7 @@ export class AuthenticationService {
           this.canResendVerficationEmail = false;
           setTimeout(() => {
             this.canResendVerficationEmail = true;
-          }, 2000);
+          }, 60000);
           this.router.navigate(['verify-email-address']);
         })
     }
@@ -118,7 +138,7 @@ export class AuthenticationService {
           this.canReset = false;
           setTimeout(() => {
             this.canReset = true;
-          }, 2000);
+          }, 60000);
           // window.alert('Password reset email sent, check your inbox.');
           this._snackbarService.openSnackBar('Password reset email sent');
           this.router.navigate(['login']);
@@ -151,6 +171,11 @@ export class AuthenticationService {
         if (result.user) {
           const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
           this.SetUserData(userData);
+          localStorage.setItem('user', JSON.stringify(this.userData));
+          const taskStore = localStorage.getItem('taskStore');
+          if (!taskStore) {
+            localStorage.setItem('taskStore', JSON.stringify([]));
+          }
         }
         this.ngZone.run(() => {
           this.redirectToDashboard();
@@ -185,21 +210,21 @@ export class AuthenticationService {
   // Sign out
   SignOut() {
     return this.afAuth.auth.signOut().then(() => {
-      localStorage.removeItem('user');
+      localStorage.clear();
       this.router.navigate(['login']);
     })
   }
 
   guestLogout() {
-    localStorage.removeItem('user');
+    localStorage.clear();
     this.router.navigate(['login']);
   }
 
-  RedirectIfUserIsLoggedIn() {
-    if (this.isLoggedIn) {
-      this.redirectToDashboard();
-    }
-  }
+  // RedirectIfUserIsLoggedIn() {
+  //   if (this.isLoggedIn) {
+  //     this.redirectToDashboard();
+  //   }
+  // }
 
   InvalidInput() {
     this._snackbarService.openSnackBar('Enter correct details');

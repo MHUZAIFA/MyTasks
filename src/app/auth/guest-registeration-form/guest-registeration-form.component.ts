@@ -20,7 +20,7 @@ export class GuestRegisterationFormComponent implements OnInit {
 
   constructor(private _location: Location, private _authenticationService: AuthenticationService, public systemSettingsService: SystemSettingsService) { }
 
-  ngOnInit() { this._authenticationService.RedirectIfUserIsLoggedIn(); }
+  ngOnInit() {  }
 
   signInWithGoogle() { this._authenticationService.GoogleAuth(); }
   signInWithFacebook() { this._authenticationService.FacebookAuth(); }

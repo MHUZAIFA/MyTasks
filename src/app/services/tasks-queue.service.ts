@@ -34,7 +34,7 @@ export class TasksQueueService {
 
   updateActionItem(item: IActionQueueItem) {
     const index = this.m_actionQueue.findIndex(q => q.id === item.id && q.action === item.action);
-    if (index) {
+    if (index !== -1) {
       this.m_actionQueue[index] = item;
     }
   }
@@ -66,42 +66,62 @@ export class TasksQueueService {
     });
   }
 
+  registrationModeUpdateUUID(uuid: string) {
+    console.log('Queue: ', this.m_actionQueue)
+    if (this.m_actionQueue.length > 0) {
+      this.m_actionQueue.forEach(i => i.task.uid = uuid);
+    }
+  }
+
+  clearQueue() { this.m_actionQueue = []; }
+
   async processQueueItem() {
-    console.log('Syncing...', this.m_actionQueue);
+    let list: IActionQueueItem[] = [];
+    const queue: IActionQueueItem[] = this.m_actionQueue;
+    console.log('Syncing...', queue);
     // perform create operations at first
-    const createActions = this.m_actionQueue.filter(q => q.action === ACTION.CREATE);
-    if (createActions.length > 0) {
-      createActions.forEach(async (i) => await this.performAction(i));
+    const createActions = queue.filter(q => q.action === ACTION.CREATE);
+    list = this.sortQueueItemsByDate(createActions);
+    console.log('sorted list', list);
+    if (list.length > 0) {
+      await Promise.all(list.map(async (i) => {
+        const response = await this.performAction(i);
+        queue.forEach(q => q.id === i.id ? q.task.id = response.id : '');
+      }))
+        .then(_ => {
+          const updateActions = queue.filter(q => q.action === ACTION.UPDATE);
+          list = this.sortQueueItemsByDate(updateActions);
+          console.log('sorted list', list);
+          if (list.length > 0) {
+            list.forEach(async (i) => await this.performAction(i));
+          }
+          const deleteActions = queue.filter(q => q.action === ACTION.DELETE);
+          list = this.sortQueueItemsByDate(deleteActions);
+          console.log('sorted list', list);
+          if (list.length > 0) {
+            list.forEach(async (i) => await this.performAction(i));
+          }
+        })
+        .catch(err => console.error(err));
     }
-    const response = await this.m_taskFirestoreService.getTasks();
-      if (response.docs) {
-        this.m_tasks = response.docs.map(d => {
-          const data = d.data() as Task;
-          data.id = d.id;
-          return data;
-        });
-      }
-    const updateActions = this.m_actionQueue.filter(q => q.action === ACTION.UPDATE);
-    if (updateActions.length > 0) {
-      updateActions.forEach(async (i) => await this.performAction(i));
-    }
-    const deleteActions = this.m_actionQueue.filter(q => q.action === ACTION.DELETE);
-    if (deleteActions.length > 0) {
-      deleteActions.forEach(async (i) => await this.performAction(i));
-    }
-    this.m_actionQueue = [];
   }
 
   async performAction(item: IActionQueueItem): Promise<any> {
-    let result: any;
-    switch(item.action) {
+    switch (item.action) {
       case ACTION.CREATE:
         return await this.m_taskFirestoreService.createTask(item.task);
       case ACTION.UPDATE:
-        return await this.m_taskFirestoreService.updateTask(item.task);
       case ACTION.DELETE:
         return await this.m_taskFirestoreService.updateTask(item.task);
     }
+  }
+
+  private sortQueueItemsByDate(arr: IActionQueueItem[]): IActionQueueItem[] {
+    return arr.sort((a, b) => {
+      const aDate = new Date(a.task.updatedDate);
+      const bDate = new Date(b.task.updatedDate);
+      return (aDate.getTime() / 1000) - (bDate.getTime() / 1000);
+    });
   }
 
 }

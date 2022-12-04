@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(public systemSettingsService: SystemSettingsService, private _formBuilder: FormBuilder, private _location: Location, private _authService: AuthenticationService) {}
 
-  ngOnInit() { this._authService.RedirectIfUserIsLoggedIn(); }
+  ngOnInit() {  }
   back() { this._location.back(); }
   signInWithGoogle() { this._authService.GoogleAuth(); }
   signInWithFacebook() { this._authService.FacebookAuth(); }

@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { SystemSettingsService } from '../auth/services/system-settings.service';
 
 
 @Component({
@@ -8,4 +9,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./task-wrapper.component.sass'],
   providers: [DatePipe]
 })
-export class TaskWrapperComponent { }
+export class TaskWrapperComponent implements OnInit {
+
+  constructor(private m_systemSettingsService: SystemSettingsService) { }
+
+  ngOnInit(): void {
+    // this.m_systemSettingsService.isRegistrationMode = false;
+  }
+}

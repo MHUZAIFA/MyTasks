@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
 
   constructor(public systemSettingsService: SystemSettingsService, private _location: Location, private _authenticationService: AuthenticationService, public _systemSettingsService: SystemSettingsService) { }
 
-  ngOnInit() { this._authenticationService.RedirectIfUserIsLoggedIn(); }
+  ngOnInit() {  }
 
   signInWithGoogle() { this._authenticationService.GoogleAuth(); }
   signInWithFacebook() { this._authenticationService.FacebookAuth(); }

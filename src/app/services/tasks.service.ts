@@ -4,12 +4,10 @@ import { AuthenticationService } from '../auth/services/authentication.service';
 import { SystemSettingsService } from '../auth/services/system-settings.service';
 import { Task } from '../task-wrapper/models/task';
 import { User } from '../task-wrapper/models/user';
-import { UTILITY } from '../task-wrapper/utilities/utility';
 import { LocalTaskService } from './local.task.service';
-import { SnackbarMessages, SnackbarService } from './snackbar.service';
+import { SnackbarMessages } from './snackbar.service';
 import { ACTION, IActionQueueItem, TasksQueueService } from './tasks-queue.service';
 import { TasksFirestoreService } from './tasks.firestore.service';
-import { VibrationService } from './vibration.service';
 
 
 @Injectable({
@@ -33,7 +31,12 @@ export class TasksService {
   public taskUpdatedAvailable(taskId: string): Observable<any> {  return taskId ? this.m_taskFirestoreService.taskUpdatedAvailable(taskId) : of(null); }
 
   async synchronize() {
-    if (this.isOnline) {
+    if (this.isOnline && !this.loggedInUser.isGuest) {
+      if (this.m_systemSettingsService.isRegistrationMode) {
+        this.m_taskQueueService.registrationModeUpdateUUID(this.loggedInUser.uid);
+        this.m_systemSettingsService.isRegistrationMode = false;
+      }
+
       // get latest tasks
       let tasks: Task[] = [];
       tasks = await this.getTasksFromCloud();
@@ -42,12 +45,12 @@ export class TasksService {
         this.m_taskQueueService.synchronizeActionQueue(tasks);
         // after syncing perform remaining actions in the queue
         this.m_taskQueueService.processQueueItem();
+        this.m_taskQueueService.clearQueue();
         // get latest after update
         tasks = await this.getTasksFromCloud();
       }
       this.m_localTaskService.updateLocalStorage(tasks);
       this._allTasks = tasks;
-      this.m_taskQueueService.tasks = tasks;
     }
   }
 
@@ -61,7 +64,7 @@ export class TasksService {
 
   async getTaskById(id: string): Promise<Task | undefined> {
     let task: Task | undefined;
-    if (this._allTasks, length > 0) {
+    if (this._allTasks.length > 0) {
       task = this._allTasks.find(t => t.taskId === id);
     } else {
       task = await this.m_localTaskService.getTaskById(id);
@@ -95,7 +98,6 @@ export class TasksService {
     task = this.sanitizeTask(task);
     task.updatedDate = new Date();
     task.uid = this.loggedInUser.uid;
-    console.log('id: ',task.id, 'taskid: ', task.taskId)
     const actionQueueItem: IActionQueueItem = { id: task.taskId, task: task, action: ACTION.UPDATE }
     if (this.isOnline && !this.loggedInUser.isGuest) {
       await this.m_taskQueueService.performAction(actionQueueItem);

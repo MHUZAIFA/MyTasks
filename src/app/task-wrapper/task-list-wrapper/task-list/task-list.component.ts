@@ -32,6 +32,13 @@ export class TaskListComponent implements OnInit, OnDestroy {
       if (isOnline && !this.m_authService.loggedInUser.isGuest) {
         this._systemSettingsService.isOfflineMode = false;
         await this.taskService.synchronize();
+        const taskListSyncSub = this.taskService.tasksListUpdatedAvailable().subscribe(async (updateAvailable) => {
+          if (updateAvailable !== null && !this._systemSettingsService.isSameDevice) {
+            await this.taskService.synchronize();
+            this.m_taskListService.reload();
+          }
+        });
+        this.subscriptions.push(taskListSyncSub);
       }
       if (!isOnline) {
         this._systemSettingsService.isOfflineMode = true;
@@ -39,14 +46,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
     });
     await this.taskService.synchronize();
     this.m_taskListService.reload();
-
-    const taskListSyncSub = this.taskService.tasksListUpdatedAvailable().subscribe(async (updateAvailable) => {
-      if (updateAvailable !== null && !this._systemSettingsService.isSameDevice) {
-        await this.taskService.synchronize();
-        this.m_taskListService.reload();
-      }
-    });
-    this.subscriptions = [isOnlineSub, taskListSyncSub];
+    this.subscriptions.push(isOnlineSub);
   }
 
   ngOnDestroy(): void {

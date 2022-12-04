@@ -59,6 +59,10 @@ export class SystemSettingsService {
   public get isGuestMode(): boolean { return this.m_isGuestMode; }
   public set isGuestMode(isGuestMode: boolean) { this.m_isGuestMode = isGuestMode; localStorage.setItem('isGuestMode', JSON.stringify(isGuestMode)); }
 
+  private m_isRegistrationMode: boolean = false;
+  public get isRegistrationMode(): boolean { return this.m_isRegistrationMode; }
+  public set isRegistrationMode(isRegistrationMode: boolean) { this.m_isRegistrationMode = isRegistrationMode; localStorage.setItem('isRegistrationMode', JSON.stringify(isRegistrationMode)); }
+
   private m_isVibrationOn: boolean = true;
   public get isVibrationOn(): boolean { return this.m_isVibrationOn; }
   public set isVibrationOn(isVibrationOn: boolean) { this.m_isVibrationOn = isVibrationOn; localStorage.setItem('isVibrationOn', JSON.stringify(isVibrationOn)); }
