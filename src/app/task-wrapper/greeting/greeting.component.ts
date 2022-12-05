@@ -11,8 +11,7 @@ import { User } from '../models/user';
 })
 export class GreetingComponent implements OnInit {
 
-  private m_user: User | null = null;
-  get user(): User | null { return this.m_user; }
+  get user(): User | null { return this.m_authService.loggedInUser; }
 
   get greeting(): string {
     var today = new Date()
@@ -28,9 +27,7 @@ export class GreetingComponent implements OnInit {
 
   constructor(private systemSettingsService: SystemSettingsService, private m_authService: AuthenticationService, private router: Router) { }
 
-  ngOnInit(): void {
-    this.m_user = this.m_authService.loggedInUser;
-  }
+  ngOnInit(): void { }
 
   settings() {
     if (this.systemSettingsService.isMobileDevice) {

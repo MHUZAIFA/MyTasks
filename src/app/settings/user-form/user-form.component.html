@@ -1,0 +1,28 @@
+<div class="edit_profile_wrapper">
+  <div class="edit_profile_header">
+    <span style="font-size: large; font-weight: 500;">
+      Edit Profile
+    </span>
+    <mat-icon (click)="dialogRef.close()">close</mat-icon>
+  </div>
+  <div class="profile_image_wrapper">
+    <input type="file" id="employee_img" (change)="onFileChanged($event)" #uploadImage class="uploadImage" autocomplete="off">
+    <img [src]="user.photoURL" alt="user_img">
+    <div class="profile_image_actions">
+      <button mat-raised-button color="primary" class="custom_button btn_danger ml-0">
+        Remove &nbsp; <mat-icon>delete_forever</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" class="custom_button btn_logout mr-0" (click)="uploadImage.click()">
+        Change &nbsp; <mat-icon>add_photo_alternate</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="edit_form_wrapper">
+    <label for="Username" class="theme_label">Username</label>
+    <input id="Username" class="form-control theme_text_input custom_input w-100" type="text"
+      placeholder="John Doe" [(ngModel)]="displayName" required autocomplete="off">
+      <button type="submit" mat-raised-button color="primary" class="custom_button btn_sync" (click)="update()" [disabled]="!canSave">
+        Update &nbsp; <mat-icon>trending_flat </mat-icon>
+      </button>
+  </div>
+</div>

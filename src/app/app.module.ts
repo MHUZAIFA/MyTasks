@@ -43,6 +43,8 @@ import { environment } from '../environments/environment';
 import { TaskSearchComponent } from './task-wrapper/task-search/task-search.component';
 import { OfflineComponent } from './offline/offline.component';
 import { TaskDetailsDefaultComponent } from './task-wrapper/task-details/task-details-default/task-details-default.component';
+import { UserFormComponent } from './settings/user-form/user-form.component';
+import { AngularFireStorageModule } from "@angular/fire/storage";
 
 @NgModule({
   declarations: [
@@ -75,7 +77,8 @@ import { TaskDetailsDefaultComponent } from './task-wrapper/task-details/task-de
     SettingsUnitComponent,
     DashboardComponent,
     TaskSearchComponent,
-    OfflineComponent
+    OfflineComponent,
+    UserFormComponent
   ],
   imports: [
     BrowserModule,
@@ -90,6 +93,7 @@ import { TaskDetailsDefaultComponent } from './task-wrapper/task-details/task-de
     NgxChartsModule,
     LandingModule,
     AuthModule,
+    AngularFireStorageModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable

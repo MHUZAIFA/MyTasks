@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../auth/services/authentication.service';
 import { SystemSettingsService, Theme } from '../auth/services/system-settings.service';
 import { TaskListService } from '../services/task-list.service';
 import { User } from '../task-wrapper/models/user';
+import { UserFormComponent } from './user-form/user-form.component';
 
 
 @Component({
@@ -29,7 +31,12 @@ export class SettingsComponent {
     return text;
   }
 
-  constructor(public systemSettingsService: SystemSettingsService, private router: Router, private authService: AuthenticationService, private m_taskListService: TaskListService) { }
+  constructor(
+    public systemSettingsService: SystemSettingsService,
+    private router: Router,
+    private m_dialog: MatDialog,
+    private authService: AuthenticationService,
+    private m_taskListService: TaskListService) { }
 
   logout() {
     if (!this.systemSettingsService.isOfflineMode) {
@@ -38,7 +45,16 @@ export class SettingsComponent {
   }
 
   editUserInfo() {
+    const dialogRef = this.m_dialog.open(UserFormComponent, {
+      width: '100%',
+      maxWidth:  this.systemSettingsService.isMobileDevice && this.systemSettingsService.isLandscapeMode ? '500px' : '350px',
+      panelClass: 'theme_modal',
+      disableClose: true
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
   sync() {

@@ -31,16 +31,15 @@ export class AuthenticationService {
 
     this.afAuth.authState.subscribe(user => {
       if (user) {
+        console.log(user);
         this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false, true, Theme.System);
-        localStorage.setItem('user', JSON.stringify(this.userData));
-        JSON.parse(localStorage.getItem('user') as string);
+        this.SetUserData(this.userData);
       } else {
         const user: User = JSON.parse(localStorage.getItem('user') as string) as User
         if (user) {
           this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false, user.isVibrationEnabled, user.selectedTheme);
-        } else {
-          localStorage.setItem('user', JSON.stringify(null));
-          JSON.parse(localStorage.getItem('user') as string);
+          this.SetUserData(this.userData);
+          console.log(this.userData);
         }
       }
     });
@@ -68,7 +67,7 @@ export class AuthenticationService {
           if (currentUser) {
             this.userData = new User(currentUser.uid, currentUser.emailVerified, currentUser.email, currentUser.displayName, currentUser.photoURL, false, true, Theme.System);
             this.SetUserData(this.userData);
-            localStorage.setItem('user', JSON.stringify(this.userData));
+            console.log(this.userData);
             if (this.loggedInUser) {
               const taskStore = localStorage.getItem('taskStore');
               if (!taskStore) {
@@ -97,11 +96,11 @@ export class AuthenticationService {
         up and returns promise */
         const photoURL = 'assets/imgs/no_user_profile.png';
         if (result.user) {
-          result.user.updateProfile({ displayName: displayName, photoURL: photoURL }).then(_ => {
+          result.user.updateProfile({ displayName: displayName, photoURL: result.user.photoURL }).then(_ => {
             if (result.user) {
-              const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
-              this.SetUserData(userData);
-              localStorage.setItem('user', JSON.stringify(this.userData));
+              this.userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
+              this.SetUserData(this.userData);
+              console.log(this.userData);
               this.canResendVerficationEmail = true;
               this.SendVerificationMail();
             }
@@ -171,7 +170,7 @@ export class AuthenticationService {
         if (result.user) {
           const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
           this.SetUserData(userData);
-          localStorage.setItem('user', JSON.stringify(this.userData));
+          console.log(this.userData);
           const taskStore = localStorage.getItem('taskStore');
           if (!taskStore) {
             localStorage.setItem('taskStore', JSON.stringify([]));
@@ -190,7 +189,7 @@ export class AuthenticationService {
   provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
   SetUserData(user: User) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-    const userData: User = {
+    this.userData = {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
@@ -201,8 +200,14 @@ export class AuthenticationService {
       selectedTheme: user.selectedTheme
 
     }
-    this.systemSettingsService.isGuestMode = userData.isGuest;
-    return userRef.set(userData, {
+    this.systemSettingsService.isGuestMode = this.userData.isGuest;
+    localStorage.setItem('user', JSON.stringify(this.userData));
+    console.log(this.userData);
+    const currentUser = this.afAuth.auth.currentUser;
+    if (currentUser) {
+      return currentUser.updateProfile({ displayName: this.userData.displayName, photoURL: this.userData.photoURL });
+    }
+    return userRef.set(this.userData, {
       merge: true
     })
   }
