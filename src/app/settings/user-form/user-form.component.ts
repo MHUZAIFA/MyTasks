@@ -43,6 +43,8 @@ export class UserFormComponent implements OnInit {
   }
 
   update() {
+    this.user.displayName = this.displayName.trim();
+    this.user.photoURL = this.photoURL;
     this.m_authService.SetUserData(this.user).then(() => {
       this.m_snackbarService.openSnackBar('Profile details updated successfully!');
       this.dialogRef.close()
@@ -72,7 +74,7 @@ export class UserFormComponent implements OnInit {
         finalize(() => {
           this.downloadURL = fileRef.getDownloadURL();
           this.downloadURL.subscribe(url => {
-            this.user.photoURL = url;
+            this.photoURL = url;
             this.m_isProfileImageUpdate = true;
             console.log(this.user)
           });
