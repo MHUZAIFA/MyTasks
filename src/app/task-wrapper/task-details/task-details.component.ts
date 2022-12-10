@@ -71,6 +71,9 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
         this.m_panelService.id = this.taskId;
         this.original.taskId = this.taskId;
         this.loadTask(this.taskId);
+        if (this.id) {
+          this.setupRealTimeSubscription();
+        }
       }
     });
 
@@ -105,9 +108,6 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
           this.setTask(task);
           this.m_isUpdateAvailable = false;
           this.m_isNotFound = false;
-          if (this.id) {
-            this.setupRealTimeSubscription();
-          }
         } else {
           this.m_isNotFound = true;
           console.error('Task not found for id: ' + id)
@@ -251,7 +251,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
   }
 
   private setupRealTimeSubscription() {
-    const updateAvailableSub = this.m_taskService.taskUpdatedAvailable(this.id)
+    const updateAvailableSub = this.m_taskService.taskUpdatedAvailable(this.taskId)
       .subscribe((updatedTaskAvailabe) => {
         if (updatedTaskAvailabe !== null && !this.systemSettingsService.isSameDevice) {
           if (!this.canSave) {

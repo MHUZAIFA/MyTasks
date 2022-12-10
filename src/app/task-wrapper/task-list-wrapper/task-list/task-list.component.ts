@@ -40,7 +40,9 @@ export class TaskListComponent implements OnInit, OnDestroy {
         this.subscriptions.push(taskListSyncSub);
       }
     });
-    await this.taskService.synchronize();
+    if (!this.m_authService.loggedInUser.isGuest) {
+      await this.taskService.synchronize();
+    }
     this.m_taskListService.reload();
     this.subscriptions.push(isOnlineSub);
   }

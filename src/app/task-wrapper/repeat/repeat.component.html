@@ -6,9 +6,9 @@
   </div>
 
   <div class="custom_badge_container">
-    <span class="theme_badge" [ngClass]="{'selected': option.value === this.repeatedTask.interval, 'disabled': !repeatedTask.isRepeated }"
-      *ngFor="let option of Interval | keyvalue" (click)="setRepeatInterval(option.value)">
-      {{ option.value }}
+    <span class="theme_badge" [ngClass]="{'selected': item === this.repeatedTask.interval, 'disabled': !repeatedTask.isRepeated }"
+      *ngFor="let item of intervals" (click)="setRepeatInterval(item)">
+      {{ item }}
     </span>
   </div>
 

@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BaseTask } from '../base-task';
 import { INTERVAL, RepeatedTask } from '../models/task';
 
 @Component({
@@ -15,7 +14,7 @@ export class RepeatComponent {
 
   color: ThemePalette = 'primary';
   disabled = false;
-  Interval = INTERVAL;
+  intervals: INTERVAL[] = [INTERVAL.NONE, INTERVAL.HOURLY, INTERVAL.DAILY, INTERVAL.WEEKLY, INTERVAL.MONTHLY, INTERVAL.YEARLY];
 
   constructor(public dialogRef: MatDialogRef<RepeatComponent>, @Inject(MAT_DIALOG_DATA) private data: any) {
 

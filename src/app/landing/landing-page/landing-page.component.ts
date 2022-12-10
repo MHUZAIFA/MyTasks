@@ -17,6 +17,7 @@ export class LandingPageComponent implements OnInit {
   constructor(public systemSettingsService: SystemSettingsService) { }
 
   ngOnInit(): void {
+    localStorage.clear();
   }
 
 }

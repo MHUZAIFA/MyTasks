@@ -18,7 +18,7 @@ export class LoggedInGuard implements CanActivate {
       return true;
     }
 
-      if (this.authService.isLoggedIn) {
+    if (this.authService.isLoggedIn) {
       if (this.systemSettingsService.deviceType === DeviceType.Desktop) {
         const id = route.paramMap.get('id');
         if (id) {

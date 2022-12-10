@@ -27,22 +27,21 @@ export class AuthenticationService {
     const isGuestMode = localStorage.getItem('isGuestMode') as string;
     if (isGuestMode === null) {
       this.router.navigate(['login']);
-    }
-
-    this.afAuth.authState.subscribe(user => {
-      if (user) {
-        console.log(user);
-        this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false, true, Theme.System);
-        this.SetUserData(this.userData);
-      } else {
-        const user: User = JSON.parse(localStorage.getItem('user') as string) as User
+    } else {
+      this.afAuth.authState.subscribe(user => {
+        const isGuestMode = JSON.parse(localStorage.getItem('isGuestMode') as string) as boolean;
         if (user) {
-          this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, false, user.isVibrationEnabled, user.selectedTheme);
+          this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, isGuestMode, true, Theme.System);
           this.SetUserData(this.userData);
-          console.log(this.userData);
+        } else {
+          const user: User = JSON.parse(localStorage.getItem('user') as string) as User
+          if (user) {
+            this.userData = new User(user.uid, user.emailVerified, user.email, user.displayName, user.photoURL, isGuestMode, user.isVibrationEnabled, user.selectedTheme);
+            this.SetUserData(this.userData);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   SignInAsGuest(displayName: string) {
@@ -67,7 +66,6 @@ export class AuthenticationService {
           if (currentUser) {
             this.userData = new User(currentUser.uid, currentUser.emailVerified, currentUser.email, currentUser.displayName, currentUser.photoURL, false, true, Theme.System);
             this.SetUserData(this.userData);
-            console.log(this.userData);
             if (this.loggedInUser) {
               const taskStore = localStorage.getItem('taskStore');
               if (!taskStore) {
@@ -100,7 +98,6 @@ export class AuthenticationService {
             if (result.user) {
               this.userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
               this.SetUserData(this.userData);
-              console.log(this.userData);
               this.canResendVerficationEmail = true;
               this.SendVerificationMail();
             }
@@ -151,7 +148,7 @@ export class AuthenticationService {
   // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user') as string) as User;
-    return (user !== null && user.emailVerified !== false) || (user !== null && user.isGuest) ? true : false;
+    return (user !== null && user.emailVerified !== false) || (user !== null && user.isGuest);
   }
 
   // Sign in with Google
@@ -170,7 +167,6 @@ export class AuthenticationService {
         if (result.user) {
           const userData = new User(result.user.uid, result.user.emailVerified, result.user.email, result.user.displayName, result.user.photoURL, false, true, Theme.System);
           this.SetUserData(userData);
-          console.log(this.userData);
           const taskStore = localStorage.getItem('taskStore');
           if (!taskStore) {
             localStorage.setItem('taskStore', JSON.stringify([]));
@@ -195,14 +191,13 @@ export class AuthenticationService {
       displayName: user.displayName,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      isGuest: false,
+      isGuest: user.isGuest,
       isVibrationEnabled: user.isVibrationEnabled,
       selectedTheme: user.selectedTheme
 
     }
     this.systemSettingsService.isGuestMode = this.userData.isGuest;
     localStorage.setItem('user', JSON.stringify(this.userData));
-    console.log(this.userData);
     const currentUser = this.afAuth.auth.currentUser;
     if (currentUser) {
       return currentUser.updateProfile({ displayName: this.userData.displayName, photoURL: this.userData.photoURL });

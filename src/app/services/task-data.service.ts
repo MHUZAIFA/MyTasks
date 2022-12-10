@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Task } from '../task-wrapper/models/task';
 import { TasksService } from './tasks.service';
 

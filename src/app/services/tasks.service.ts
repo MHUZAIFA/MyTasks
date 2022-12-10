@@ -27,8 +27,22 @@ export class TasksService {
     private m_localTaskService: LocalTaskService,
     private m_systemSettingsService: SystemSettingsService) { }
 
-  public tasksListUpdatedAvailable(): Observable<any> { return this.m_taskFirestoreService.tasksListUpdatedAvailable(); }
-  public taskUpdatedAvailable(taskId: string): Observable<any> {  return taskId ? this.m_taskFirestoreService.taskUpdatedAvailable(taskId) : of(null); }
+  public tasksListUpdatedAvailable(): Observable<any> {
+    if (this.isOnline && !this.loggedInUser.isGuest) {
+      return this.m_taskFirestoreService.tasksListUpdatedAvailable();
+    } else {
+      return of(null);
+    }
+  }
+
+  public taskUpdatedAvailable(taskId: string): Observable<any> {
+    const task = this._allTasks.find(t => t.taskId === taskId);
+    if (task && this.isOnline && !this.loggedInUser.isGuest) {
+      return this.m_taskFirestoreService.taskUpdatedAvailable(task.id)
+    } else {
+      return of(null);
+    }
+  }
 
   async synchronize() {
     if (this.isOnline && !this.loggedInUser.isGuest) {
