@@ -26,7 +26,7 @@ export class LocalTaskService {
     const tasks = JSON.parse(
       localStorage.getItem(this.key) as string
     ) as Task[];
-    const task = tasks.find((t) => t.taskId === id) as Task;
+    const task = tasks.find((t) => t.taskId === id && t.isDeleted === false) as Task;
     return new Promise((resolve) => {
       resolve(task);
     });

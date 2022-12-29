@@ -78,11 +78,7 @@ export class TasksService {
 
   async getTaskById(id: string): Promise<Task | undefined> {
     let task: Task | undefined;
-    if (this._allTasks.length > 0) {
-      task = this._allTasks.find(t => t.taskId === id);
-    } else {
-      task = await this.m_localTaskService.getTaskById(id);
-    }
+    task = await this.m_localTaskService.getTaskById(id);
     return new Promise((resolve) => {
       resolve(task);
     });
