@@ -129,6 +129,12 @@ export abstract class BaseTask {
     }
   }
 
+  addAttachment(url: string) {
+    this.attachments.push(url);
+    this.attachments = [...this.attachments];
+    console.log(this.attachments);
+  }
+
   isEqual(task: Task): boolean {
     return this.id === task.id &&
       this.taskId === task.taskId &&

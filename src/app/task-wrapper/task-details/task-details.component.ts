@@ -13,6 +13,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SystemSettingsService } from 'src/app/auth/services/system-settings.service';
 import { AlertComponent } from './alert/alert.component';
 import { TasksService } from 'src/app/services/tasks.service';
+import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 
 @Component({
   selector: 'app-task-details',
@@ -28,6 +31,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
   categories = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
   subscriptions: Subscription[] = [];
   DetailsPanelActions = DetailsPanelActions;
+  attachements: File[] = [];
 
   public get selectedDate(): Date | null { return this.dueDate; }
 
@@ -51,8 +55,11 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     private m_panelService: PanelService,
     private m_taskService: TasksService,
     private m_taskListService: TaskListService,
+    private m_authServie: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
+    private m_storage: AngularFireStorage,
+    private m_db: AngularFirestore,
     public taskDataService: TaskDataService,
     private m_snackbarService: SnackbarService,
     public dialog: MatDialog,
@@ -108,6 +115,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
           this.setTask(task);
           this.m_isUpdateAvailable = false;
           this.m_isNotFound = false;
+          console.log(task)
         } else {
           this.m_isNotFound = true;
           console.error('Task not found for id: ' + id)
@@ -177,6 +185,47 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
         break;
     }
   }
+
+  onFileChanged(event: any) {
+    const files = event.target.files;
+    if (files.length === 0) return;
+    console.log(files);
+    this.uploadAttachments(files);
+  }
+
+  private uploadAttachments(files: FileList) {
+    if (!files || files.length === 0) return;
+
+    const userId = this.m_authServie.loggedInUser.uid; // Get current user ID
+
+    const promises: AngularFireUploadTask[] = [];
+    const fileRefs: AngularFireStorageReference[] = []; // Define fileRefs array to store references
+
+    Array.from(files).forEach((file: File) => {
+      const filePath = `files/${userId}/${this.taskId}/${file.name}`;
+      const fileRef = this.m_storage.ref(filePath);
+      fileRefs.push(fileRef); // Store file reference in fileRefs array
+      const task = this.m_storage.upload(filePath, file);
+      promises.push(task);
+    });
+    
+    Promise.all(promises).then(() => {
+      const downloadURLPromises = fileRefs.map((fileRef) => {
+        return fileRef.getDownloadURL().toPromise(); // Convert Observable to Promise
+      });
+    
+      return Promise.all(downloadURLPromises);
+    }).then((urls) => {
+      urls.forEach((url) => {
+        console.log(url);
+        this.addAttachment(url);
+      });
+    }).catch((error) => {
+      // Handle errors
+      console.error("Error uploading files:", error);
+    });
+  }
+
 
   private createDuplicateTask() {
     this.id = '';

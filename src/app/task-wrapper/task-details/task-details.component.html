@@ -144,8 +144,15 @@
           </div>
 
           <app-metadata-unit icon="attach_file" style="margin-top: 5px;" label="Attachment(s)" [hideBorder]="true"
-            [value]="attachments.length > 0 ? 'EDIT' : 'ADD' ">
+            [value]="attachments.length > 0 ? 'EDIT' : 'ADD' " (clicked)="uploadImage.click()">
           </app-metadata-unit>
+
+          <input type="file" [(ngModel)]="attachements" (change)="onFileChanged($event)" #uploadImage class="uploadImage" style="height: 0; width: 0; opacity: 0; position: absolute;" multiple>
+          <div class="upload-image-container" *ngIf="attachments.length == 0">
+            <div class="upload-image-wrapper" (click)="uploadImage.click()">
+              <mat-icon class="addProfileIcon">file_upload</mat-icon> Upload files
+            </div>
+          </div>
 
           <div class="tasks_attachments">
             <p *ngFor="let item of attachments"> {{ item }} </p>
