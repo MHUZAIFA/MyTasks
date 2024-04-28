@@ -157,6 +157,19 @@
           <div class="tasks_attachments">
             <p *ngFor="let item of attachments"> {{ item }} </p>
           </div>
+
+          <div class="tasks_attachments" style="margin-bottom: 100px;">
+            <ng-container *ngFor="let url of attachments">
+              <ng-container *ngIf="itemType(url) === 'image'; then ImageBlock; else DocumentBlock;"></ng-container>
+              <ng-template #ImageBlock>
+                <img [src]="getSafeUrl(url)" alt="Image Preview" width="100%">
+              </ng-template>
+              <ng-template #DocumentBlock>
+                <iframe [src]="getSafeUrl(url)" width="100%" height="600"></iframe>
+              </ng-template>
+              <!-- Add more conditions for other types of attachments if needed -->
+            </ng-container>
+          </div>
         </div>
 
       </div>

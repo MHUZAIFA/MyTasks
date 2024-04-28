@@ -16,6 +16,7 @@ import { TasksService } from 'src/app/services/tasks.service';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-task-details',
@@ -60,6 +61,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     private router: Router,
     private m_storage: AngularFireStorage,
     private m_db: AngularFirestore,
+    private sanitizer: DomSanitizer,
     public taskDataService: TaskDataService,
     private m_snackbarService: SnackbarService,
     public dialog: MatDialog,
@@ -191,6 +193,15 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     if (files.length === 0) return;
     console.log(files);
     this.uploadAttachments(files);
+  }
+
+  itemType(url: string): string {
+    if (!(url.includes('.png') || url.includes('.jpg') || url.includes('.jpeg'))) return 'document';
+    return 'image'
+  }
+
+  getSafeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   private uploadAttachments(files: FileList) {

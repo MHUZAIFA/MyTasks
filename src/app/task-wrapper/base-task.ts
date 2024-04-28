@@ -130,8 +130,9 @@ export abstract class BaseTask {
   }
 
   addAttachment(url: string) {
-    this.attachments.push(url);
-    this.attachments = [...this.attachments];
+    const attachments = [...this.attachments];
+    attachments.push(url);
+    this.attachments = [...attachments];
     console.log(this.attachments);
   }
 
