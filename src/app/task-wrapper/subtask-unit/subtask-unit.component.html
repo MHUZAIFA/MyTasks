@@ -1,6 +1,6 @@
 <div class="subtask_wrapper theme_bg_default" *ngIf="subTask">
   <div class="subtask_checkbox" [ngClass]="{'isDisabled': isDisabled}">
-    <i [ngClass]="{ 'far fa-circle': !subTask.completed, 'fa fa-check-circle completed': subTask.completed }"
+    <i class="chk_icon" [ngClass]="{ 'far fa-circle': !subTask.completed, 'fa fa-check-circle completed': subTask.completed }"
       (click)="!isDisabled && subTask.completed = !subTask.completed"></i>
   </div>
   <div class="subtask_input">

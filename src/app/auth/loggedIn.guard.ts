@@ -19,18 +19,20 @@ export class LoggedInGuard implements CanActivate {
     }
 
     if (this.authService.isLoggedIn) {
-      if (this.systemSettingsService.deviceType === DeviceType.Desktop) {
-        const id = route.paramMap.get('id');
-        if (id) {
-          this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: id } }]);
-        } else {
-          this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: 'default' } }]);
-        }
-        return false;
-      }
-      if (this.systemSettingsService.deviceType === DeviceType.Mobile) {
-        this.router.navigate([this.systemSettingsService.basePath]);
-        return false;
+      switch(this.systemSettingsService.deviceType) {
+        case DeviceType.Desktop:
+          const id = route.paramMap.get('id');
+          if (id) {
+            this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: id } }]);
+          } else {
+            this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: 'default' } }]);
+          }
+          break;
+        case DeviceType.Mobile:
+          this.router.navigate([this.systemSettingsService.basePath]);
+          break;
+        default:
+          console.log('unsupported device type');
       }
     }
     return true;

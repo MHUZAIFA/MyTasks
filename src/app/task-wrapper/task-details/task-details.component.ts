@@ -25,7 +25,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
   public get isNotFound(): boolean { return this.m_isNotFound; }
   private m_loading: boolean = true;
   public get loading(): boolean { return this.m_loading; }
-  categories = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY];
+  categories = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
   subscriptions: Subscription[] = [];
   DetailsPanelActions = DetailsPanelActions;
 

@@ -17,7 +17,7 @@ export class TaskListHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   @Input() searchModeActive: boolean = false;
 
-  categories = [CATEGORY.ALL, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY];
+  categories = [CATEGORY.ALL, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
   selectedCategory = CATEGORY.ALL;
 
   constructor(

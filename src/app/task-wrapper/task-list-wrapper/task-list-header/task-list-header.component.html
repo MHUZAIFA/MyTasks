@@ -11,9 +11,14 @@
     id="tasksSearchText"
     >
   <div class="custom_task_list_badge_container">
-    <span class="theme_badge" [ngClass]="{'selected': item == selectedCategory, 'ml-0': first, 'mr-0': last}"
+    <div style="display: flex; justify-content: space-between; width: 100%; overflow-x: auto;">
+      <span class="theme_badge" [ngClass]="{'selected': item == selectedCategory, 'ml-0': first, 'mr-0': last}"
       *ngFor="let item of categories; let first = first; let last = last;" (click)="showTasks(item)">
       {{ item }}
     </span>
+    <!-- <span class="theme_badge mr-0">
+      <i class="fa fa-plus"></i>
+    </span> -->
+    </div>
   </div>
 </div>

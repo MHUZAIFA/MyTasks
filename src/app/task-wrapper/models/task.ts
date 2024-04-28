@@ -152,6 +152,7 @@ export enum CATEGORY {
   WORK = 'Work',
   PERSONAL = 'Personal',
   WISHLIST = 'Wishlist',
-  BIRTHDAY = 'Birthday'
+  BIRTHDAY = 'Birthday',
+  PROJECTS = 'Projects'
 }
 

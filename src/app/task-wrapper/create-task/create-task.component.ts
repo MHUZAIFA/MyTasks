@@ -18,7 +18,7 @@ import { UTILITY } from '../utilities/utility';
 })
 export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDestroy {
 
-  categories: CATEGORY[] = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY];
+  categories: CATEGORY[] = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY,CATEGORY.PROJECTS];
   subscription: Subscription | null = null;
 
   public get isCreateDisabled(): boolean {

@@ -58,7 +58,7 @@
             {{ category }}
           </button>
           <mat-menu #categorymenu="matMenu">
-            <button mat-menu-item *ngFor="let item of categories" (click)="category = item" [disabled]="isReadonly">
+            <button mat-menu-item *ngFor="let item of categories" (click)="category = item" [disabled]="isReadonly" [ngClass]="{'txt_selected': item == category}">
               <span> {{ item }} </span>
             </button>
           </mat-menu>

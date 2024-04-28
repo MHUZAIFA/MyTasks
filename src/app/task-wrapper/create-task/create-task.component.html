@@ -14,7 +14,7 @@
         <div class="form-select form-select-sm custom_select_round" [matMenuTriggerFor]="menu"> {{ category }}
         </div>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngFor="let item of categories" (click)="category = item">
+          <button mat-menu-item *ngFor="let item of categories" (click)="category = item" [ngClass]="{'txt_selected': item == category}">
             <span> {{ item }} </span>
           </button>
         </mat-menu>

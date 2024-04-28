@@ -26,7 +26,7 @@ export class AuthenticationService {
   ) {
     const isGuestMode = localStorage.getItem('isGuestMode') as string;
     if (isGuestMode === null) {
-      this.router.navigate(['login']);
+      // this.router.navigate(['login']);
     } else {
       this.afAuth.authState.subscribe(user => {
         const isGuestMode = JSON.parse(localStorage.getItem('isGuestMode') as string) as boolean;
