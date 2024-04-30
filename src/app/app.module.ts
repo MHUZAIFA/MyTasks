@@ -45,6 +45,7 @@ import { OfflineComponent } from './offline/offline.component';
 import { TaskDetailsDefaultComponent } from './task-wrapper/task-details/task-details-default/task-details-default.component';
 import { UserFormComponent } from './settings/user-form/user-form.component';
 import { AngularFireStorageModule } from "@angular/fire/storage";
+import { CachedSrcDirective } from './directives/cachedsrc.derective';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { AngularFireStorageModule } from "@angular/fire/storage";
     DashboardComponent,
     TaskSearchComponent,
     OfflineComponent,
-    UserFormComponent
+    UserFormComponent,
+    CachedSrcDirective
   ],
   imports: [
     BrowserModule,

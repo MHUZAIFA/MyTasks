@@ -81,4 +81,9 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
     if (el) { el.focus(); }
   }
 
+  selectAttachment() {
+    // TODO: Add alogic to display a modal
+    // where user can select, delete and preview files
+  }
+
 }
