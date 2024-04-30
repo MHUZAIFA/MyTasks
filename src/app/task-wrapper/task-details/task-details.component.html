@@ -101,7 +101,7 @@
             </div>
           </div>
           <div class="task_heading">
-            <textarea rows="3" [(ngModel)]="title" class="custom_textarea" [ngClass]="{'readonly': isReadonly}"
+            <textarea rows="3" [(ngModel)]="title" class="custom_textarea input_border_primary" [ngClass]="{'readonly': isReadonly}"
               placeholder="Add Task Title" [readonly]="isReadonly"></textarea>
           </div>
           <div class="subtask_input">
@@ -139,26 +139,26 @@
           </app-metadata-unit>
 
           <div class="task_notes border_default_color">
-            <textarea rows="5" [(ngModel)]="notes" class="custom_textarea" placeholder="Add Notes"
+            <textarea rows="5" [(ngModel)]="notes" class="custom_textarea input_border_primary" placeholder="Add Notes"
               [readonly]="isReadonly" [ngClass]="{'readonly': isReadonly}"></textarea>
           </div>
 
-          <app-metadata-unit icon="attach_file" style="margin-top: 5px;" label="Attachment(s)" [hideBorder]="true"
+          <app-metadata-unit *ngIf="!isGuestUser" icon="attach_file" style="margin-top: 5px;" label="Attachment(s)" [hideBorder]="true"
             [value]="attachments.length > 0 ? 'EDIT' : 'ADD' " (clicked)="uploadImage.click()">
           </app-metadata-unit>
 
           <input type="file" [(ngModel)]="attachements" (change)="onFileChanged($event)" #uploadImage class="uploadImage" style="height: 0; width: 0; opacity: 0; position: absolute;" multiple>
-          <div class="upload-image-container" *ngIf="attachments.length == 0">
-            <div class="upload-image-wrapper" (click)="uploadImage.click()">
+          <div class="upload-image-container" *ngIf="attachments.length == 0 && !isGuestUser">
+            <div class="input_border_primary upload-image-wrapper focus" (click)="uploadImage.click()">
               <mat-icon class="addProfileIcon">file_upload</mat-icon> Upload files
             </div>
           </div>
 
-          <div class="tasks_attachments">
+          <!-- <div class="tasks_attachments">
             <p *ngFor="let item of attachments"> {{ item }} </p>
-          </div>
+          </div> -->
 
-          <div class="tasks_attachments" style="margin-bottom: 100px;">
+          <div class="tasks_attachments" style="margin-bottom: 100px;" *ngIf="!isGuestUser">
             <ng-container *ngFor="let url of attachments">
               <ng-container *ngIf="itemType(url) === 'image'; then ImageBlock; else DocumentBlock;"></ng-container>
               <ng-template #ImageBlock>

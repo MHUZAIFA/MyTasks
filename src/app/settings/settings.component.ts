@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { SystemSettingsService, Theme } from '../auth/services/system-settings.s
 import { TaskListService } from '../services/task-list.service';
 import { User } from '../task-wrapper/models/user';
 import { UserFormComponent } from './user-form/user-form.component';
+import { Subject, fromEvent, takeUntil } from 'rxjs';
 
 
 @Component({
@@ -14,8 +15,9 @@ import { UserFormComponent } from './user-form/user-form.component';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.sass']
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit, OnDestroy {
 
+  private onDestroy$: Subject<void> = new Subject<void>();
   public get user(): User | null { return this.authService.loggedInUser; }
   themes: Theme[] = [Theme.System, Theme.Light, Theme.Dark];
   theme: Theme = Theme.System;
@@ -38,6 +40,21 @@ export class SettingsComponent {
     private authService: AuthenticationService,
     private m_taskListService: TaskListService) { }
 
+  ngOnInit() {
+    // Subscribe to the keyboard events
+    this.listenToKeyboardEvents().pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(event => {
+      this.handleKeyboardEvent(event as KeyboardEvent);
+    });
+  }
+
+  ngOnDestroy() {
+    // Cleanup when component is destroyed
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   logout() {
     if (!this.systemSettingsService.isOfflineMode) {
       this.authService.SignOut();
@@ -47,7 +64,7 @@ export class SettingsComponent {
   editUserInfo() {
     const dialogRef = this.m_dialog.open(UserFormComponent, {
       width: '100%',
-      maxWidth:  this.systemSettingsService.isMobileDevice && this.systemSettingsService.isLandscapeMode ? '500px' : '350px',
+      maxWidth: this.systemSettingsService.isMobileDevice && this.systemSettingsService.isLandscapeMode ? '500px' : '350px',
       panelClass: 'theme_modal',
       disableClose: true
     });
@@ -62,11 +79,12 @@ export class SettingsComponent {
   }
 
   close() {
-    if (this.systemSettingsService.isMobileDevice) {
-      this.router.navigate([this.systemSettingsService.basePath]);
-    } else {
-      this.router.navigateByUrl(this.systemSettingsService.basePath + '/(sidepanel:default)');
-    }
+    history.back();
+    // if (this.systemSettingsService.isMobileDevice) {
+    //   this.router.navigate([this.systemSettingsService.basePath]);
+    // } else {
+    //   this.router.navigateByUrl(this.systemSettingsService.basePath + '/(sidepanel:default)');
+    // }
   }
 
   registerGuest() {
@@ -78,6 +96,18 @@ export class SettingsComponent {
 
   guestLogout() {
     this.authService.guestLogout();
+  }
+
+  private listenToKeyboardEvents() {
+    return fromEvent(document, 'keydown');
+  }
+
+  private handleKeyboardEvent(event: KeyboardEvent) {
+
+    if (event.key === 'Escape') {
+      // Escape key
+      this.close();
+    }
   }
 
 }

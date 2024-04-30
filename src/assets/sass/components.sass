@@ -38,6 +38,9 @@ $box_shadown_default_card_hover: 0 4px 8px 0 rgba(0,0,0,0.35)
   background-color: $bg_default
   border: 2px solid $border_color_default
 
+  &:focus
+    border-color: $border_color_active
+
 // bottom sheet
 .custom_bottom_sheet
   background: $bottom_sheet_bg
@@ -379,6 +382,16 @@ ngx-charts-gauge
 // borders
 .border_default_color
   border-color: $border_color_default
+
+.input_border_primary
+  border: 2px solid $border_color_default
+
+  &.focus
+    border-color: $border_color_active
+
+  &:focus
+    border-color: $border_color_active
+
 
 // toggle
 .mat-slide-toggle

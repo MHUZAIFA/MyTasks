@@ -16,5 +16,6 @@ export class SubtaskUnitComponent {
 
   addSubtask() { this.addSubtaskEvent.emit(); }
   delete() { this.remove.emit(); }
+  focus: boolean = false;
 
 }

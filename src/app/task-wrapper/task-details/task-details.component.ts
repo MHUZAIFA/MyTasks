@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Subscription, fromEvent } from 'rxjs';
 import { BaseTask } from '../base-task';
 import { CATEGORY, Reminder, RepeatedTask, Task, TaskMetaData } from '../models/task';
 import { PanelService, DetailsPanelActions } from '../../services/panel.service';
@@ -17,6 +17,8 @@ import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask 
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-task-details',
@@ -26,17 +28,18 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class TaskDetailsComponent extends BaseTask implements OnDestroy {
 
   private m_isNotFound: boolean = false;
-  public get isNotFound(): boolean { return this.m_isNotFound; }
+  private onDestroy$: Subject<void> = new Subject<void>();
   private m_loading: boolean = true;
-  public get loading(): boolean { return this.m_loading; }
-  categories = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
-  subscriptions: Subscription[] = [];
-  DetailsPanelActions = DetailsPanelActions;
-  attachements: File[] = [];
-
-  public get selectedDate(): Date | null { return this.dueDate; }
-
   private m_isUpdateAvailable: boolean = false;
+
+  public categories = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
+  public subscriptions: Subscription[] = [];
+  public DetailsPanelActions = DetailsPanelActions;
+  public attachements: File[] = [];
+
+  public get isNotFound(): boolean { return this.m_isNotFound; }
+  public get loading(): boolean { return this.m_loading; }
+  public get selectedDate(): Date | null { return this.dueDate; }
   public get isReadonly(): boolean { return this.completed || this.m_isUpdateAvailable; }
   public get isCompleted(): boolean { return this.completed; }
   public get menuOptions(): DetailsPanelActions[] {
@@ -48,9 +51,8 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     return result;
   }
 
-  get isUpdateAvailable(): boolean {
-    return this.m_isUpdateAvailable;
-  }
+  public get isUpdateAvailable(): boolean { return this.m_isUpdateAvailable; }
+  public get isGuestUser(): boolean { return this.m_authServie.loggedInUser.isGuest; }
 
   constructor(
     private m_panelService: PanelService,
@@ -60,7 +62,6 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private m_storage: AngularFireStorage,
-    private m_db: AngularFirestore,
     private sanitizer: DomSanitizer,
     public taskDataService: TaskDataService,
     private m_snackbarService: SnackbarService,
@@ -92,11 +93,19 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
 
     this.subscriptions = [routeSub];
 
+    this.listenToKeyboardEvents().pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(event => {
+      this.handleKeyboardEvent(event as KeyboardEvent);
+    });
+
   }
 
   ngOnDestroy(): void {
     this.reset();
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   setMetadata() {
@@ -333,6 +342,34 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
         }
       });
       this.subscriptions.push(updateAvailableSub);
+  }
+
+  private listenToKeyboardEvents() {
+    return fromEvent(document, 'keydown');
+  }
+
+  private handleKeyboardEvent(event: KeyboardEvent) {
+
+    if (event.ctrlKey || event.metaKey) { // Check if Ctrl or Cmd key is pressed
+      if (event.key === 's') {
+        // Ctrl/Cmd + S
+        event.preventDefault();
+        this.performAction(DetailsPanelActions.Save)
+      } else if (event.key === 'd') {
+        // Ctrl/Cmd + D
+        event.preventDefault();
+        this.performAction(DetailsPanelActions.Discard)
+      }
+    }
+
+    if (event.key === 'Escape') {
+      // Escape key
+      if (this.systemSettingsService.isMobileDevice) {
+        this.router.navigate([this.systemSettingsService.basePath]);
+      } else {
+        this.router.navigateByUrl(this.systemSettingsService.basePath + '/(sidepanel:default)');
+      }
+    }
   }
 
 }
