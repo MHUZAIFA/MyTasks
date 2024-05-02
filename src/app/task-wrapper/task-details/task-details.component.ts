@@ -19,6 +19,7 @@ import { AuthenticationService } from 'src/app/auth/services/authentication.serv
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { attachment } from '../models/attachment';
 
 @Component({
   selector: 'app-task-details',
@@ -35,7 +36,6 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
   public categories = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
   public subscriptions: Subscription[] = [];
   public DetailsPanelActions = DetailsPanelActions;
-  public attachements: File[] = [];
 
   public get isNotFound(): boolean { return this.m_isNotFound; }
   public get loading(): boolean { return this.m_loading; }
@@ -58,17 +58,17 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     private m_panelService: PanelService,
     private m_taskService: TasksService,
     private m_taskListService: TaskListService,
-    private m_authServie: AuthenticationService,
+    override m_authServie: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
-    private m_storage: AngularFireStorage,
-    private sanitizer: DomSanitizer,
+    override m_storage: AngularFireStorage,
+    override sanitizer: DomSanitizer,
     public taskDataService: TaskDataService,
     private m_snackbarService: SnackbarService,
     public dialog: MatDialog,
     public systemSettingsService: SystemSettingsService,
     public taskMetadataModalService: TaskMetadataModalsService) {
-    super();
+    super(m_storage, sanitizer, m_authServie);
     const detailsPanelActionsSub = this.m_panelService.performActionEvent$().subscribe(action => this.performAction(action));
     this.subscriptions.push(detailsPanelActionsSub);
   }
@@ -179,13 +179,15 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
       case DetailsPanelActions.Save:
         if (this.isValidTitle()) {
           this.systemSettingsService.isSameDevice = true;
-          this.m_taskService.updatetask(this.getTaskInstance(), SnackbarMessages.TaskUpdated, false)
+          this.uploadAttachments().then(() => {
+            this.m_taskService.updatetask(this.getTaskInstance(), SnackbarMessages.TaskUpdated, false)
             .then(() => {
               this.m_taskListService.reload();
               this.setTask(this.getTaskInstance());
             })
             .catch(error => console.error(error))
             .finally(() => this.systemSettingsService.isSameDevice = false);
+          });
         }
         break;
       case DetailsPanelActions.Discard:
@@ -201,51 +203,55 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     const files = event.target.files;
     if (files.length === 0) return;
     console.log(files);
-    this.uploadAttachments(files);
+    // this.uploadAttachments(files);
+    this.previewFiles(files);
+
+    const inputEl = document.getElementById("uploadImage") as HTMLInputElement;
+    if (inputEl) {
+      inputEl.value = ''; // Clear the input element
+    }
   }
 
-  itemType(url: string): string {
-    if (!(url.includes('.png') || url.includes('.jpg') || url.includes('.jpeg'))) return 'document';
-    return 'image'
-  }
-
-  getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
-
-  private uploadAttachments(files: FileList) {
-    if (!files || files.length === 0) return;
-
-    const userId = this.m_authServie.loggedInUser.uid; // Get current user ID
-
-    const promises: AngularFireUploadTask[] = [];
-    const fileRefs: AngularFireStorageReference[] = []; // Define fileRefs array to store references
-
-    Array.from(files).forEach((file: File) => {
-      const filePath = `files/${userId}/${this.taskId}/${file.name}`;
-      const fileRef = this.m_storage.ref(filePath);
-      fileRefs.push(fileRef); // Store file reference in fileRefs array
-      const task = this.m_storage.upload(filePath, file);
-      promises.push(task);
-    });
+  removeAttachmentById(idToRemove: string): void {
+    // Find the index of the attachment with the given ID
+    const indexToRemove = this.attachments.findIndex(attachment => attachment.id === idToRemove);
     
-    Promise.all(promises).then(() => {
-      const downloadURLPromises = fileRefs.map((fileRef) => {
-        return fileRef.getDownloadURL().toPromise(); // Convert Observable to Promise
-      });
-    
-      return Promise.all(downloadURLPromises);
-    }).then((urls) => {
-      urls.forEach((url) => {
-        console.log(url);
-        this.addAttachment(url);
-      });
-    }).catch((error) => {
-      // Handle errors
-      console.error("Error uploading files:", error);
-    });
+    // If the attachment with the given ID is found, remove it from the array
+    if (indexToRemove !== -1) {
+      this.attachments.splice(indexToRemove, 1);
+    }
   }
 
+  getFileType(filename: string): string {
+    const extension = this.getFileExtension(filename);
+    switch (extension) {
+      case 'xls':
+      case 'xlsx':
+        return 'excel';
+      case 'pdf':
+        return 'pdf';
+      case 'doc':
+      case 'docx':
+        return 'word';
+      case 'ppt':
+      case 'pptx':
+        return 'powerpoint';
+      case 'txt':
+        return 'txt';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        return 'image';
+      default:
+        return 'unknown';
+    }
+  }
+  
+
+  private getFileExtension(filename: string): string {
+    return filename.split('.').pop()?.toLowerCase() || '';
+  }
 
   private createDuplicateTask() {
     this.id = '';

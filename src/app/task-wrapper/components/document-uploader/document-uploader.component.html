@@ -1,0 +1,38 @@
+<p>Document Uploader</p>
+
+<mat-dialog-content>
+    <input type="file" [(ngModel)]="files" (change)="onFileChanged($event)" #uploadImage class="uploadImage"
+        style="height: 0; width: 0; opacity: 0; position: absolute;" accept=".pdf, image/*" multiple>
+    <div class="upload-image-container">
+        <div class="input_border_primary upload-image-wrapper focus" (click)="uploadImage.click()">
+            <mat-icon class="addProfileIcon">file_upload</mat-icon> Upload files
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            {{attachments}}
+          <ng-container *ngFor="let url of attachments">
+            <!-- <ng-container *ngIf="itemType(url) === 'image'; then ImageBlock; else DocumentBlock;"></ng-container> -->
+            <ng-template #ImageBlock>
+              <div class="col-md-4">
+                <!-- <img [src]="getSafeUrl(url)" alt="Image Preview" width="100%" height="150px" style="margin-top: 15px;"> -->
+              </div>
+            </ng-template>
+            <ng-template #DocumentBlock>
+              <div class="col-md-4">
+                <iframe [cachedSrc]="url+'#view=fit'" height="150px" width="100%" style="margin-top: 15px;"></iframe>
+              </div>
+            </ng-template>
+            <!-- Add more conditions for other types of attachments if needed -->
+          </ng-container>
+        </div>
+      </div>
+    
+</mat-dialog-content>
+
+
+<mat-dialog-actions>
+    <button mat-button (click)="cancel()">Cancel</button>
+    <button mat-button [mat-dialog-close]="attachments" cdkFocusInitial>Done</button>
+</mat-dialog-actions>

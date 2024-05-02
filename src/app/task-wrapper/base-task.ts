@@ -1,5 +1,9 @@
+import { AngularFireStorage } from "@angular/fire/storage";
+import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { SubTask, RepeatedTask, CATEGORY, INTERVAL, Task, Reminder, RemindAT, TaskMetaData } from "./models/task";
 import { UTILITY } from "./utilities/utility";
+import { AuthenticationService } from "../auth/services/authentication.service";
+import { attachment } from "./models/attachment";
 const _ = require('lodash');
 
 export abstract class BaseTask {
@@ -13,7 +17,7 @@ export abstract class BaseTask {
   public reminder: Reminder;
   public repeatedTask: RepeatedTask;
   public notes: string;
-  public attachments: string[];
+  public attachments: attachment[];
   public completed: boolean;
   public completedDate: Date | null;
   public uid: string;
@@ -23,7 +27,11 @@ export abstract class BaseTask {
   public metadata: TaskMetaData;
   public isDeleted: boolean;
 
-  constructor() {
+  constructor(
+    public m_storage: AngularFireStorage,
+    public sanitizer: DomSanitizer,
+    public m_authServie: AuthenticationService
+  ) {
     const date = new Date();
     this.id = '';
     this.taskId = '';
@@ -130,10 +138,7 @@ export abstract class BaseTask {
   }
 
   addAttachment(url: string) {
-    const attachments = [...this.attachments];
-    attachments.push(url);
-    this.attachments = [...attachments];
-    console.log(this.attachments);
+
   }
 
   isEqual(task: Task): boolean {
@@ -147,9 +152,95 @@ export abstract class BaseTask {
       this.reminder && this.reminder.isEqual(task.reminder) &&
       this.repeatedTask.isEqual(task.repeatedTask) &&
       this.notes === task.notes &&
-      UTILITY.IsSimilarArray(this.attachments, task.attachments) &&
+      UTILITY.IsSimilarArray(this.attachments.map(a => a.name), task.attachments.map(a => a.name)) &&
       this.completed === task.completed &&
       this.uid === task.uid;
   }
+
+  itemType(url: string): string {
+    if (!(url.includes('.png') || url.includes('.jpg') || url.includes('.jpeg'))) return 'document';
+    return 'image'
+  }
+
+  getSafeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  previewFiles(files: FileList) {
+    const userId = this.m_authServie.loggedInUser.uid; // Get current user ID
+    const newAttachments: attachment[] = [...this.attachments];
+    const existing = this.attachments.map(a => a.name);
+
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+
+      if (existing.includes(file.name)) continue;
+
+      const fileId = `${userId}-${this.taskId}-${index}`;
+      const fileName = file.name;
+      const fileType = file.type; // Determine file type based on its name
+      const fileSizeInBytes = file.size;
+      const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+      const newAttachment = new attachment(fileId, fileName, fileType, fileSizeInMB, file, null);
+
+      newAttachments.push(newAttachment);
+    }
+
+
+    // Now you have the new attachments with URLs
+    console.log(newAttachments);
+    // Add new attachments to existing array of attachments
+    this.attachments = [...newAttachments];
+  }
+
+  uploadAttachments(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this.attachments.length === 0 || UTILITY.IsSimilarArray(this.attachments.map(a => a.name), this.original.attachments.map(a => a.name))) {
+        resolve(); // Resolve immediately if there are no attachments
+        return;
+      }
+
+      console.log('Uploading new files...');
+      const attachmentsToUpload = [...this.attachments].filter(a => !a.url);
+
+      const userId = this.m_authServie.loggedInUser.uid; // Get current user ID
+
+      const promises: Promise<string>[] = []; // Array to store promises for download URLs
+
+      attachmentsToUpload.forEach((attachment: attachment) => {
+        const filePath = `files/${userId}/${this.taskId}/${attachment.name}`;
+        const task = this.m_storage.upload(filePath, attachment.file);
+        const downloadURLPromise = new Promise<string>((innerResolve, innerReject) => {
+          task.then(snapshot => {
+            snapshot.ref.getDownloadURL().then(downloadURL => {
+              innerResolve(downloadURL);
+            }).catch(error => innerReject(error));
+          }).catch(error => innerReject(error));
+        });
+        promises.push(downloadURLPromise);
+      });
+
+      Promise.all(promises).then(urls => {
+        attachmentsToUpload.forEach((file, index) => {
+          const fileName = file.name;
+          const fileUrl = urls[index];
+          
+          const idx = this.attachments.findIndex(a => a.name === fileName);
+          if (idx != -1) {
+            const a = this.attachments[idx];
+            a.file = null;
+            a.url = fileUrl;
+          }
+        });
+        resolve(); // Resolve the Promise after processing
+      }).catch(error => {
+        // Handle errors
+        console.error("Error uploading files:", error);
+        reject(error); // Reject the Promise if there's an error
+      });
+    });
+  }
+
 
 }

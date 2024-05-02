@@ -10,6 +10,11 @@ import { TaskMetadataModalsService } from '../../services/task-metadata-modals.s
 import { BaseTask } from '../base-task';
 import { CATEGORY, Task, TaskMetaData } from '../models/task';
 import { UTILITY } from '../utilities/utility';
+import { MatDialog } from '@angular/material/dialog';
+import { DocumentUploaderComponent } from '../components/document-uploader/document-uploader.component';
+import { AngularFireStorage } from '@angular/fire/storage';
+import { DomSanitizer } from '@angular/platform-browser';
+import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 
 @Component({
   selector: 'app-create-task',
@@ -31,8 +36,13 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
     private router: Router,
     private panelService: PanelService,
     public taskMetadataModalService: TaskMetadataModalsService,
-    private m_taskService: TasksService, private m_taskListService: TaskListService) {
-    super();
+    private m_taskService: TasksService,
+    private m_taskListService: TaskListService,
+    private dialog: MatDialog,
+    override m_storage: AngularFireStorage,
+    override sanitizer: DomSanitizer,
+    override m_authServie: AuthenticationService,) {
+    super(m_storage, sanitizer, m_authServie);
   }
 
   ngAfterViewInit(): void {
@@ -84,6 +94,27 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
   selectAttachment() {
     // TODO: Add alogic to display a modal
     // where user can select, delete and preview files
+
+    /*  Steps:
+    1. Open dialog (pass current attachements as input and read updated attachments on close)
+    */
+
+    this.openDialog();
+
+  }
+
+  private openDialog(): void {
+    const dialogRef = this.dialog.open(DocumentUploaderComponent, {
+      data: {attachments: this.attachments},
+      width: '450px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      console.log(result);
+      
+      // this.attachments = result;
+    });
   }
 
 }

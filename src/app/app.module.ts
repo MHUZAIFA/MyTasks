@@ -46,6 +46,9 @@ import { TaskDetailsDefaultComponent } from './task-wrapper/task-details/task-de
 import { UserFormComponent } from './settings/user-form/user-form.component';
 import { AngularFireStorageModule } from "@angular/fire/storage";
 import { CachedSrcDirective } from './directives/cachedsrc.derective';
+import { DocumentUploaderComponent } from './task-wrapper/components/document-uploader/document-uploader.component';
+import { DocumentPreViewerComponent } from './task-wrapper/components/document-uploader/document-pre-viewer/document-pre-viewer.component';
+import { DocumentViewerComponent } from './task-wrapper/components/document-uploader/document-viewer/document-viewer.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +83,10 @@ import { CachedSrcDirective } from './directives/cachedsrc.derective';
     TaskSearchComponent,
     OfflineComponent,
     UserFormComponent,
-    CachedSrcDirective
+    CachedSrcDirective,
+    DocumentUploaderComponent,
+    DocumentPreViewerComponent,
+    DocumentViewerComponent
   ],
   imports: [
     BrowserModule,

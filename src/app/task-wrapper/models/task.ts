@@ -1,3 +1,5 @@
+import { attachment } from "./attachment";
+
 export class TaskMetaData {
   dueDate: Date | null;
   time: Date | null;
@@ -29,7 +31,7 @@ export class Task extends TaskMetaData {
   subtasks: SubTask[];
   category: CATEGORY;
   notes: string;
-  attachments: string[];
+  attachments: attachment[];
   completed: boolean;
   completedDate: Date | null;
   uid: string;
@@ -48,7 +50,7 @@ export class Task extends TaskMetaData {
     reminder: Reminder,
     repeatedTask: RepeatedTask,
     notes: string,
-    attachments: string[],
+    attachments: attachment[],
     completed: boolean,
     completedDate: Date | null,
     uid: string,
