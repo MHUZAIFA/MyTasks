@@ -16,9 +16,9 @@ export class TaskNotesComponent extends BaseTask {
     public dialogRef: MatDialogRef<TaskNotesComponent>,
     public override m_storage: AngularFireStorage,
     public override sanitizer: DomSanitizer,
-    public override m_authServie: AuthenticationService
+    public override m_authService: AuthenticationService
   ) {
-    super(m_storage, sanitizer, m_authServie);
+    super(m_storage, sanitizer, m_authService);
   }
 
   onDoneClicked(): void {

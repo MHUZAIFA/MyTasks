@@ -34,7 +34,7 @@ export class GaugeChartComponent implements OnInit, AfterViewInit {
     name: 'Custom_gauge_color_scheme',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#833AB4', '#3b5998', '#FF0000', '#1DA1F2', '#3d464d'],
+    domain: ['#833AB4', '#3b5998', '#FF0000', '#1DA1F2', '#3d464d', '#fff'],
   };
 
   constructor() {}
@@ -82,4 +82,19 @@ export class GaugeChartComponent implements OnInit, AfterViewInit {
       }
     }, 500);
   }
+
+  getBigSegments(): number {
+    const max = this.max;
+    if (max % 2 === 0) {
+      return max / 2;
+    } else if (max % 3 === 0) {
+      console.log(max)
+      return max / 3;
+    } else if (max % 5 === 0) {
+      return max / 5;
+    } else {
+      return max;
+    }
+  }
+
 }

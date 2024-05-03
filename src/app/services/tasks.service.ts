@@ -84,7 +84,7 @@ export class TasksService {
     });
   }
 
-  async createTask(task: Task): Promise<string> {
+  async createTask(task: Task, suppressNotification: boolean): Promise<string> {
     task = this.sanitizeTask(task);
     const timeStamp = new Date();
     task.uid = this.loggedInUser.uid;
@@ -97,7 +97,7 @@ export class TasksService {
     } else {
       this.m_taskQueueService.addActionItem(actionQueueItem);
     }
-    await this.m_localTaskService.createTask(actionQueueItem.task, false);
+    await this.m_localTaskService.createTask(actionQueueItem.task, suppressNotification);
     this.m_taskQueueService.tasks = await this.m_localTaskService.getTasks();
     return new Promise((resolve) => {
       resolve(task.taskId);

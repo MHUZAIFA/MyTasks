@@ -26,11 +26,12 @@ export abstract class BaseTask {
   public updatedDate: Date;
   public metadata: TaskMetaData;
   public isDeleted: boolean;
+  public attachmentsToRemove: attachment[] = [];
 
   constructor(
     public m_storage: AngularFireStorage,
     public sanitizer: DomSanitizer,
-    public m_authServie: AuthenticationService
+    public m_authService: AuthenticationService
   ) {
     const date = new Date();
     this.id = '';
@@ -167,7 +168,7 @@ export abstract class BaseTask {
   }
 
   previewFiles(files: FileList) {
-    const userId = this.m_authServie.loggedInUser.uid; // Get current user ID
+
     const newAttachments: attachment[] = [...this.attachments];
     const existing = this.attachments.map(a => a.name);
 
@@ -176,7 +177,7 @@ export abstract class BaseTask {
 
       if (existing.includes(file.name)) continue;
 
-      const fileId = `${userId}-${this.taskId}-${index}`;
+      const fileId = UTILITY.GenerateUUID();
       const fileName = file.name;
       const fileType = file.type; // Determine file type based on its name
       const fileSizeInBytes = file.size;
@@ -196,7 +197,7 @@ export abstract class BaseTask {
 
   uploadAttachments(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (this.attachments.length === 0 || UTILITY.IsSimilarArray(this.attachments.map(a => a.name), this.original.attachments.map(a => a.name))) {
+      if (this.attachments.length === 0 || (this.attachments.length > 0 && UTILITY.IsSimilarArray(this.attachments.map(a => a.name), this.original.attachments.map(a => a.name)))) {
         resolve(); // Resolve immediately if there are no attachments
         return;
       }
@@ -204,9 +205,10 @@ export abstract class BaseTask {
       console.log('Uploading new files...');
       const attachmentsToUpload = [...this.attachments].filter(a => !a.url);
 
-      const userId = this.m_authServie.loggedInUser.uid; // Get current user ID
+      const userId = this.m_authService.loggedInUser.uid; // Get current user ID
 
       const promises: Promise<string>[] = []; // Array to store promises for download URLs
+      console.log(attachmentsToUpload);
 
       attachmentsToUpload.forEach((attachment: attachment) => {
         const filePath = `files/${userId}/${this.taskId}/${attachment.name}`;
@@ -240,6 +242,59 @@ export abstract class BaseTask {
         reject(error); // Reject the Promise if there's an error
       });
     });
+  }
+
+  removeAttachmentsFromFirebase(attachments: attachment[]): Promise<void> {
+    const promises: Promise<void>[] = [];
+
+    attachments.forEach(attachmentToRemove => {
+      const storageRef = this.m_storage.storage.refFromURL(attachmentToRemove.url as string);
+
+      const promise = storageRef.delete().then(() => {
+        console.log('File deleted successfully from Firebase Storage');
+      }).catch(error => {
+        console.error('Error deleting file from Firebase Storage:', error);
+      });
+
+      promises.push(promise);
+    });
+
+    return Promise.all(promises).then(() => {
+      console.log('All files deleted successfully from Firebase Storage');
+    }).catch(error => {
+      console.error('Error deleting files from Firebase Storage:', error);
+    });
+  }
+
+  getFileType(filename: string): string {
+    const extension = this.getFileExtension(filename);
+    switch (extension) {
+      case 'xls':
+      case 'xlsx':
+        return 'excel';
+      case 'pdf':
+        return 'pdf';
+      case 'doc':
+      case 'docx':
+        return 'word';
+      case 'ppt':
+      case 'pptx':
+        return 'powerpoint';
+      case 'txt':
+        return 'txt';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        return 'image';
+      default:
+        return 'unknown';
+    }
+  }
+  
+
+  private getFileExtension(filename: string): string {
+    return filename.split('.').pop()?.toLowerCase() || '';
   }
 
 

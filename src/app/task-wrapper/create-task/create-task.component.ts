@@ -15,6 +15,8 @@ import { DocumentUploaderComponent } from '../components/document-uploader/docum
 import { AngularFireStorage } from '@angular/fire/storage';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
+import { attachment } from '../models/attachment';
+import { SnackbarMessages } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-create-task',
@@ -23,12 +25,14 @@ import { AuthenticationService } from 'src/app/auth/services/authentication.serv
 })
 export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDestroy {
 
-  categories: CATEGORY[] = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY,CATEGORY.PROJECTS];
+  categories: CATEGORY[] = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
   subscription: Subscription | null = null;
 
   public get isCreateDisabled(): boolean {
     return !this.title;
   }
+
+  public get isGuestUser(): boolean { return this.m_authService.loggedInUser.isGuest; }
 
   constructor(
     private _bottomSheetRef: MatBottomSheetRef<CreateTaskComponent>,
@@ -41,8 +45,8 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
     private dialog: MatDialog,
     override m_storage: AngularFireStorage,
     override sanitizer: DomSanitizer,
-    override m_authServie: AuthenticationService,) {
-    super(m_storage, sanitizer, m_authServie);
+    override m_authService: AuthenticationService) {
+    super(m_storage, sanitizer, m_authService);
   }
 
   ngAfterViewInit(): void {
@@ -63,19 +67,38 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
     const task: Task = this.getTaskInstance();
     task.taskId = UTILITY.GenerateUUID();
     this.systemSettingsService.isSameDevice = true;
-    this.m_taskService.createTask(task)
+    const attachements: attachment[] = [...this.attachments];
+    console.log(attachements);
+    this.attachments = [];
+    task.attachments = [];
+    console.log(task.taskId);
+    this.m_taskService.createTask(task, true)
       .then((id: string) => {
-        this.m_taskListService.reload();
-        if (this.systemSettingsService.deviceType === DeviceType.Desktop && !this.panelService.editMode) {
-          setTimeout(() => {
-            this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: task.taskId } }]);
-          }, 200);
-        }
+        // this.taskId = id;
+        console.log(id);
+        this.setTask(task);
+        this.attachments = [...attachements];
+        console.log(this.attachments);
+        this.uploadAttachments().then(() => {
+          this.m_taskService.updatetask(this.getTaskInstance(), SnackbarMessages.TaskCreated, false)
+            .then(() => {
+              this.m_taskListService.reload();
+              this.setTask(this.getTaskInstance());
+              if (this.systemSettingsService.deviceType === DeviceType.Desktop && !this.panelService.editMode) {
+                setTimeout(() => {
+                  this.m_taskListService.reload();
+                  this.systemSettingsService.isSameDevice = false;
+                  this._bottomSheetRef.dismiss();
+                  this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: task.taskId } }]);
+                }, 200);
+              }
+            })
+            .catch(error => console.error(error))
+            .finally(() => this.systemSettingsService.isSameDevice = false);
+        });
       })
       .catch(error => console.error(error))
       .finally(() => {
-        this.systemSettingsService.isSameDevice = false;
-        this._bottomSheetRef.dismiss();
       });
   }
 
@@ -104,16 +127,17 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
   }
 
   private openDialog(): void {
+    console.log(this.attachments);
     const dialogRef = this.dialog.open(DocumentUploaderComponent, {
-      data: {attachments: this.attachments},
+      data: [...this.attachments],
       width: '450px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      console.log(result);
-      
-      // this.attachments = result;
+      if (Array.isArray(result)) {
+        this.attachments = [...result];
+      }
     });
   }
 

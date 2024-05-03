@@ -38,3 +38,36 @@
         // width: calc(33.33% - 10px)
         width: 100%
         margin-bottom: 20px
+
+.attachment-item 
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding-top: 13px
+
+  .image-wrapper
+    width: 40px // Adjust size as needed
+    height: auto // Ensure aspect ratio is maintained
+
+    .icon
+        width: 40px
+
+  .details 
+    width: calc(100% - 80px)
+    flex-direction: column
+
+    .name 
+      display: block
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+      
+    .size 
+      display: block
+      color: #666 // Adjust color as needed
+
+  .delete
+    width: 22px
+    height: 22px
+    font-size: 22px
+    cursor: pointer

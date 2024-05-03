@@ -13,13 +13,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SystemSettingsService } from 'src/app/auth/services/system-settings.service';
 import { AlertComponent } from './alert/alert.component';
 import { TasksService } from 'src/app/services/tasks.service';
-import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { attachment } from '../models/attachment';
 
 @Component({
   selector: 'app-task-details',
@@ -52,13 +50,13 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
   }
 
   public get isUpdateAvailable(): boolean { return this.m_isUpdateAvailable; }
-  public get isGuestUser(): boolean { return this.m_authServie.loggedInUser.isGuest; }
+  public get isGuestUser(): boolean { return this.m_authService.loggedInUser.isGuest; }
 
   constructor(
     private m_panelService: PanelService,
     private m_taskService: TasksService,
     private m_taskListService: TaskListService,
-    override m_authServie: AuthenticationService,
+    override m_authService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
     override m_storage: AngularFireStorage,
@@ -68,7 +66,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     public dialog: MatDialog,
     public systemSettingsService: SystemSettingsService,
     public taskMetadataModalService: TaskMetadataModalsService) {
-    super(m_storage, sanitizer, m_authServie);
+    super(m_storage, sanitizer, m_authService);
     const detailsPanelActionsSub = this.m_panelService.performActionEvent$().subscribe(action => this.performAction(action));
     this.subscriptions.push(detailsPanelActionsSub);
   }
@@ -180,18 +178,22 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
         if (this.isValidTitle()) {
           this.systemSettingsService.isSameDevice = true;
           this.uploadAttachments().then(() => {
-            this.m_taskService.updatetask(this.getTaskInstance(), SnackbarMessages.TaskUpdated, false)
-            .then(() => {
-              this.m_taskListService.reload();
-              this.setTask(this.getTaskInstance());
-            })
-            .catch(error => console.error(error))
-            .finally(() => this.systemSettingsService.isSameDevice = false);
+            this.removeAttachmentsFromFirebase(this.attachmentsToRemove).then(() => {
+              this.attachmentsToRemove = [];
+              this.m_taskService.updatetask(this.getTaskInstance(), SnackbarMessages.TaskUpdated, false)
+              .then(() => {
+                this.m_taskListService.reload();
+                this.setTask(this.getTaskInstance());
+              })
+              .catch(error => console.error(error))
+              .finally(() => this.systemSettingsService.isSameDevice = false);
+            });
           });
         }
         break;
       case DetailsPanelActions.Discard:
         this.setTask(this.original);
+        this.attachmentsToRemove = [];
         break;
       case DetailsPanelActions.Delete:
         this.deleteTask(this.taskId);
@@ -218,39 +220,13 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     
     // If the attachment with the given ID is found, remove it from the array
     if (indexToRemove !== -1) {
-      this.attachments.splice(indexToRemove, 1);
-    }
-  }
-
-  getFileType(filename: string): string {
-    const extension = this.getFileExtension(filename);
-    switch (extension) {
-      case 'xls':
-      case 'xlsx':
-        return 'excel';
-      case 'pdf':
-        return 'pdf';
-      case 'doc':
-      case 'docx':
-        return 'word';
-      case 'ppt':
-      case 'pptx':
-        return 'powerpoint';
-      case 'txt':
-        return 'txt';
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-        return 'image';
-      default:
-        return 'unknown';
-    }
-  }
+      // delete on save as user can still discard changes
+      this.attachmentsToRemove.push(this.original.attachments[indexToRemove]);
   
-
-  private getFileExtension(filename: string): string {
-    return filename.split('.').pop()?.toLowerCase() || '';
+      // Remove from local array
+      const updatedAttachments = this.attachments.filter(attachment => attachment.id !== idToRemove);
+      this.attachments = updatedAttachments;
+    }
   }
 
   private createDuplicateTask() {
@@ -260,7 +236,7 @@ export class TaskDetailsComponent extends BaseTask implements OnDestroy {
     this.createdDate = new Date();
     this.title = this.title.trim() + ' - copy';
     this.systemSettingsService.isSameDevice = true;
-    this.m_taskService.createTask(this.getTaskInstance())
+    this.m_taskService.createTask(this.getTaskInstance(), true)
       .then((newTaskId) => {
         this.id = newTaskId;
         this.m_taskListService.reload();

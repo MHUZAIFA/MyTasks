@@ -17,7 +17,7 @@
   (deactivate)="onDeactivate($event)"
   (window:resize)="onResize()"
   [max]="max"
-  [bigSegments]="max"
+  [bigSegments]="getBigSegments()"
   [smallSegments]="3"
   >
 </ngx-charts-gauge>

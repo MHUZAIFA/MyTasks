@@ -26,7 +26,7 @@ export class ChartSeries {
 })
 export class DashboardComponent implements OnInit {
 
-  chartCategories: CATEGORY[] = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY];
+  chartCategories: CATEGORY[] = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
   private m_areaChartData: AreaChartModel[] = [];
   public get areaChartData(): AreaChartModel[] { return this.m_areaChartData; }
 
