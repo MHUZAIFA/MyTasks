@@ -43,7 +43,25 @@
     .task_submit
       .btn_submit
         .mat-icon
-          height: 26px
+          height: 25px
           width: 20px
 
+
+.loader 
+  border: 4px solid #ccc
+  border-radius: 50%
+  border-top: 4px solid grey
+  width: 30px
+  height: 30px
+  animation: spin 2s linear infinite // No need for vendor prefixes in SCSS
+  margin-left: -5px
+  margin-top: -3.5px
+
+  // Define animation keyframes within the loader class
+  @keyframes spin 
+    0%
+      transform: rotate(0deg) 
+    100%
+      transform: rotate(360deg) 
+  
 

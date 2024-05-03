@@ -28,10 +28,10 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
   categories: CATEGORY[] = [CATEGORY.NOCATEGORY, CATEGORY.WORK, CATEGORY.PERSONAL, CATEGORY.WISHLIST, CATEGORY.BIRTHDAY, CATEGORY.PROJECTS];
   subscription: Subscription | null = null;
 
-  public get isCreateDisabled(): boolean {
-    return !this.title;
-  }
+  private m_isProcessing: boolean = false;
 
+  public get isCreateDisabled(): boolean { return !this.title; }
+  public get isProcessing(): boolean { return this.m_isProcessing; }
   public get isGuestUser(): boolean { return this.m_authService.loggedInUser.isGuest; }
 
   constructor(
@@ -64,6 +64,7 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
   }
 
   create() {
+    this.m_isProcessing = true;
     const task: Task = this.getTaskInstance();
     task.taskId = UTILITY.GenerateUUID();
     this.systemSettingsService.isSameDevice = true;
@@ -88,13 +89,13 @@ export class CreateTaskComponent extends BaseTask implements AfterViewInit, OnDe
                 setTimeout(() => {
                   this.m_taskListService.reload();
                   this.systemSettingsService.isSameDevice = false;
+                  this.m_isProcessing = false;
                   this._bottomSheetRef.dismiss();
                   this.router.navigate([this.systemSettingsService.basePath, { outlets: { sidepanel: task.taskId } }]);
                 }, 200);
               }
             })
-            .catch(error => console.error(error))
-            .finally(() => this.systemSettingsService.isSameDevice = false);
+            .catch(error => console.error(error));
         });
       })
       .catch(error => console.error(error))

@@ -26,8 +26,13 @@
     </div>
 
     <div class="task_submit">
-      <button class="btn_submit" mat-mini-fab (click)="create()" [disabled]="isCreateDisabled" color="primary">
+      <button *ngIf="!isProcessing" class="btn_submit" mat-mini-fab (click)="create()" [disabled]="isCreateDisabled" color="primary">
         <mat-icon>send</mat-icon>
+      </button>
+      <button *ngIf="isProcessing" class="btn_submit" mat-mini-fab  [disabled]="true" color="primary">
+        <mat-icon>
+          <div class="loader border_top_color_primary"></div>
+        </mat-icon>
       </button>
     </div>
   </div>
