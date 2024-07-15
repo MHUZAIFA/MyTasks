@@ -1,27 +1,81 @@
-# Todo
+# MyTasks
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.1.
+## Table of Contents
+- [Introduction](#introduction)
+- [Features](#features)
+- [Design](#design)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Install and Run](#install-and-run)
+- [Build](#build)
+- [App Installation](#app-installation)
+- [Contributors](#contributors)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
-## Development server
+## Introduction
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+MyTasks is a user-friendly to-do application designed to efficiently manage and track day-to-day activities. Whether you're on your smartphone, tablet, or computer, MyTasks provides a seamless experience with its cross-platform, cloud-based progressive web application.
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Features
+
+The MyTasks application offers the following features:
+
+- **Cross-Platform Compatibility:** Access MyTasks from any device - smartphone, tablet, or computer.
+- **Cloud-Based:** Store your tasks securely in the cloud for easy access and synchronization.
+- **Intuitive Interface:** User-friendly design for effortless task management.
+- **Task Organization:** Categorize tasks, set priorities, and track progress easily.
+
+
+
+## Design
+![Screenshot 1](screenshots/mockup_todo.png)
+*MyTasks GUI*
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have Node and Yarn installed on your system. If not, download and install it from [nodejs.org](https://nodejs.org/en) [yarnpkg.com](https://classic.yarnpkg.com/en/).
+
+### Install and Run
+
+First, install the dependencies of MyTasks:
+
+```bash
+yarn install
+```
+
+Second, run the development server using one of the following commands:
+
+```bash
+npm start
+```
 
 ## Build
+To generate the build.
+```bash
+ng build --aot --prod
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## App Installation
+As a progressive web application, MyTasks does not require installation from an app store. Simply visit [www.mytasksapp.com](https://www.mytasksapp.com) on your preferred web browser to get started.
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Contributors
 
-## Running end-to-end tests
+- [Huzaifa Anjum](https://github.com/mhuzaifa)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Contributing
 
-## Further help
+We welcome contributions! If you would like to contribute to MyTasks, please read our [contribution guidelines](CONTRIBUTING.md).
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## License
+
+This project is licensed under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+- A big thanks to the Angular Web development community for making MyTasks possible.
